@@ -44,12 +44,20 @@ namespace long_game_project
     class cenemyactor // for  enemy
     {
 
-        public int x, y, wf=0,dir=-10, dead_frame_index=0,revive_waiting_time;
-
+        public int x, y, wf=0, dir=-10, dead_frame_index=0, revive_waiting_time;
         public List<Bitmap> run_right = new List<Bitmap>();
         public List<Bitmap> run_left = new List<Bitmap>();
         public List<Bitmap> dead = new List<Bitmap>();
+        public List<Bitmap> idle = new List<Bitmap>();
+        public List<Bitmap> attack_right = new List<Bitmap>();
+        public List<Bitmap> attack_left = new List<Bitmap>();
         public bool is_move_right = true, is_dead=false, is_touched_hero;
+        public int attack_frame_index = 0;
+        public bool is_attacking = false;
+        public int attack_cooldown = 0;
+        public int ATTACK_RANGE = 100;
+        public int DETECTION_RANGE = 600;
+        public bool is_in_cooldown = false;
 
     }
     class cadvancedimgactor
@@ -71,6 +79,7 @@ namespace long_game_project
         Timer tt = new Timer();
         List<cimgactor> arrows= new List<cimgactor>();
         cenemyactor python = new cenemyactor();
+        cenemyactor wolf = new cenemyactor();  
         int dead_flag = 0,hero_dead_waiting_time=0;
         cadvancedimgactor pnn = new cadvancedimgactor();
         int scrollpositionx = 0;
@@ -99,19 +108,20 @@ namespace long_game_project
 
         private void Tt_Tick(object sender, EventArgs e)
         {
-
             movehero();
             shot();
             movearrow();
             jump();
             if_idle();
             move_python();
-            enemy_hit_from_arrow();
+            move_wolf();
+            enemy_hit_from_arrow(python);
+            enemy_hit_from_arrow(wolf);
             check_hero_health_if_touch(python);
-           this.Text=hero.hero_health.ToString();
-            //check_if_hero_damage(python);
+            check_hero_health_if_touch(wolf);
+            this.Text=hero.hero_health.ToString();
+            
             drawdb();
-
         }
         void check_hero_health_if_touch(cenemyactor enemy)
         {
@@ -124,9 +134,11 @@ namespace long_game_project
 
                   if(hero.y + hero.walk_r_imges[hero.walk_frame_index].Height > enemy.y && hero.y < enemy.y + enemy.run_right[enemy.wf].Height)
                   {
+                  
 
                 
                     is_touching = true;
+                   
                 
                   }
                    
@@ -143,57 +155,6 @@ namespace long_game_project
             }
         }
 
-        //        void check_if_hero_damage( cenemyactor enemy)
-//{
-//            bool is_touching;
-            
-//            if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > enemy.x &&
-//                       hero.x < enemy.x + enemy.run_right[enemy.wf].Width&&jump_count==0)
-//            {
-//                is_touching = true;
-                
-//            }
-//            else
-//            {
-//                is_touching= false;
-//            }
-
-//            if (is_touching && !enemy.is_dead)
-//            {
-//                if (dead_flag == 0)
-//                {
-//                    dead_flag = 1;
-//                    hero.display_flag = 3;
-//                    hero.dead_frame_index = 0;
-//                    hero_dead_waiting_time = 0;
-//                }
-//            }
-
-//    if (dead_flag == 1)
-//    {
-//        if (hero.dead_frame_index < hero.dead_imges.Count - 1)
-//        {
-//            hero_dead_waiting_time++;
-           
-//            if (hero_dead_waiting_time % 5 == 0) 
-//            {
-                     
-//                        hero.dead_frame_index++;
-//            }
-//        }
-
-//                else
-//                {
-
-//                    if (!is_touching)
-//                    {
-//                        hero.display_flag = 5;
-//                        dead_flag = 0;
-//                        hero.dead_frame_index = 0;
-//                    }
-//                }
-//            }
-//}
 
         void move_python()
         {
@@ -359,7 +320,7 @@ namespace long_game_project
             if (isjump )
             {
                 jump_count++;
-                hero.y -= 10;
+                hero.y -= 20;
                 
                 hero.jump_frame_index++;
                 hero.display_flag = 2;
@@ -374,7 +335,7 @@ namespace long_game_project
             }
             else if(jump_count>0)
             {
-                hero.y += 10;
+                hero.y += 20;
                 jump_count--;
             }
 
@@ -494,10 +455,11 @@ namespace long_game_project
         void drawscene(Graphics g2)
         {
             g2.Clear(Color.White);
-            g2.DrawImage(pnn.img, pnn.recdst,pnn.recsrc,GraphicsUnit.Pixel);
+           
            
             hero_display(g2);
             python_display(g2);
+            wolf_display(g2);
             arrow_display(g2);
 
 
@@ -513,20 +475,20 @@ namespace long_game_project
 
            
         }
-        void enemy_hit_from_arrow()
+        void enemy_hit_from_arrow(cenemyactor enemy)
         {
             if (arrows.Count > 0)
             {
                 for (int i = 0; i < arrows.Count; i++)
                 {
-                    if (arrows[i].x > python.x && arrows[i].x < python.x + python.run_right[python.wf].Width)
+                    if (arrows[i].x > enemy.x && arrows[i].x < enemy.x + enemy.run_right[enemy.wf].Width)
                     {
-                        if (arrows[i].y > python.y && arrows[i].y < python.y + python.run_right[python.wf].Height)
+                        if (arrows[i].y > enemy.y && arrows[i].y < enemy.y + enemy.run_right[enemy.wf].Height)
                         {
                             arrows.RemoveAt(i);
                             i--;
-                            python.is_dead = true;
-                            python.dir = 0;
+                            enemy.is_dead = true;
+                            enemy.dir = 0;
                             break;
                         }
                     }
@@ -564,7 +526,7 @@ namespace long_game_project
                 hero.walk_l_imges.Add(temp);
 
             }
-                hero.x = 10;
+                hero.x = this.ClientSize.Width-hero.walk_r_imges[0].Width;
                 hero.y = 445 ;
             // shot
             for (int i = 0; i < 11; i++)
@@ -614,10 +576,37 @@ namespace long_game_project
                
                 python.x = 200;
                 python.y = 445;
-                creatbackground();
+                //creatbackground();
 
             }
 
+            // Load wolf images
+            for (int i = 0; i < 6; i++)
+            {
+                //00_Attack_3
+                wolf.idle.Add(new Bitmap("wolf idle/0" + i + "_Idle.png"));
+                wolf.run_right.Add(new Bitmap("wolf run right/0" + i + "_Run.png"));
+                if(i<=4)
+                wolf.attack_right.Add(new Bitmap("wolf attak right/0" + i + "_Attack_3.png"));
+            }
+
+            // Create left-facing versions of run and attack animations
+            for (int i = 0; i < wolf.run_right.Count; i++)
+            {
+                wolf.run_left.Add(new Bitmap("wolf Run left/0"+i+"_.png"));
+               
+            }
+
+            for (int i = 0; i < wolf.attack_right.Count; i++)
+            {
+                wolf.attack_left.Add(new Bitmap("wolf attak left/0" + i + "_0.png"));
+               
+            }
+
+            //  wolf position
+            wolf.x = 500;
+            wolf.y = 300;
+            wolf.is_move_right = true;
 
             void creatbackground()
             {
@@ -629,6 +618,133 @@ namespace long_game_project
 
 
 
+        }
+
+        void move_wolf()
+        {
+            if (wolf.is_dead) return;
+            
+            int distance_to_hero;
+            // Calculate distance to hero
+            if (hero.x - wolf.x < 0)
+            {
+                distance_to_hero = (hero.x - wolf.x) * -1;
+            }
+            else
+            {
+                distance_to_hero = hero.x - wolf.x;
+            }
+
+            // Handle cooldown state
+            if (wolf.is_in_cooldown)
+            {
+                wolf.attack_cooldown--;
+                if (wolf.attack_cooldown <= 0)
+                {
+                    wolf.is_in_cooldown = false;
+                }
+                return;
+            }
+
+            // Attack range check (100 units)
+            if (distance_to_hero <= wolf.ATTACK_RANGE && !wolf.is_attacking && !wolf.is_in_cooldown)
+            {
+                wolf.is_attacking = true;
+                hero.hero_health--; 
+                wolf.attack_frame_index = 0;
+            }
+
+            // Handle attack animation
+            if (wolf.is_attacking)
+            {
+                wolf.attack_frame_index++;
+                if (wolf.attack_frame_index >= wolf.attack_right.Count)
+                {
+                    wolf.is_attacking = false;
+                    wolf.is_in_cooldown = true;
+                    wolf.attack_cooldown = 20;
+                }
+            }
+            // Detection range check (300 units)
+            else if (distance_to_hero <= wolf.DETECTION_RANGE && !wolf.is_in_cooldown)
+            {
+                // Move towards hero
+                wolf.wf++;
+                if (wolf.wf > 5) wolf.wf = 0;
+
+                if (hero.x < wolf.x)
+                {
+                    wolf.is_move_right = false;
+                    wolf.x -= 5;
+                }
+                else
+                {
+                    wolf.is_move_right = true;
+                    wolf.x += 5;
+                }
+            }
+            // If out of detection range, stay idle
+            else
+            {
+                // Update idle animation
+                wolf.wf++;
+                if (wolf.wf >= wolf.idle.Count)
+                {
+                    wolf.wf = 0;
+                }
+            }
+        }
+
+        void wolf_display(Graphics g2)
+        {
+            Bitmap wolf_current_image;
+
+            if (wolf.is_dead)
+            {
+                if (wolf.dead_frame_index >= wolf.dead.Count)
+                {
+                    wolf.dead_frame_index = wolf.dead.Count - 1;
+                }
+                wolf_current_image = wolf.dead[wolf.dead_frame_index];
+                if (wolf.dead_frame_index < wolf.dead.Count - 1)
+                {
+                    wolf.dead_frame_index++;
+                }
+            }
+            else if (wolf.is_attacking)
+            {
+                if (wolf.is_move_right)
+                {
+                    wolf_current_image = wolf.attack_right[wolf.attack_frame_index];
+                }
+                else
+                {
+                    wolf_current_image = wolf.attack_left[wolf.attack_frame_index];
+                }
+            }
+            else if (wolf.is_in_cooldown || Math.Abs(hero.x - wolf.x) > wolf.DETECTION_RANGE)
+            {
+                // Show idle animation when in cooldown or out of detection range
+                wolf_current_image = wolf.idle[wolf.wf];
+                wolf.wf++;
+                if (wolf.wf >= wolf.idle.Count)
+                {
+                    wolf.wf = 0;
+                }
+            }
+            else
+            {
+                if (wolf.is_move_right)
+                {
+                    wolf_current_image = wolf.run_right[wolf.wf];
+                }
+                else
+                {
+                    wolf_current_image = wolf.run_left[wolf.wf];
+                }
+            }
+
+            g2.DrawImage(wolf_current_image, wolf.x, wolf.y);
         }
     }
 }
