@@ -26,7 +26,8 @@ namespace long_game_project
         public int hero_health = 1, display_flag=0;
         public List<Bitmap>walk_r_imges = new List<Bitmap>();
         public List<Bitmap>walk_l_imges = new List<Bitmap>();
-        public List<Bitmap>shot_imges = new List<Bitmap>();
+        public List<Bitmap>shot_r_imges = new List<Bitmap>();
+        public List<Bitmap>shot_l_imges = new List<Bitmap>();
         public List<Bitmap>dead_imges = new List<Bitmap>();
         public List<Bitmap>jump_right_imges = new List<Bitmap>();
         public List<Bitmap>jump_left_imges = new List<Bitmap>();
@@ -37,20 +38,21 @@ namespace long_game_project
     }
     class cimgactor// used in arrows 
     {
-
         public int x, y, oldx;
         public Bitmap img;
+        public bool is_moving_right;
     }
     class cenemyactor // for  enemy
     {
 
-        public int x, y, wf=0, dir=-10, dead_frame_index=0, revive_waiting_time;
+        public int x, y, wf=0, dir=10, dead_frame_index=0, revive_waiting_time;
         public List<Bitmap> run_right = new List<Bitmap>();
         public List<Bitmap> run_left = new List<Bitmap>();
         public List<Bitmap> dead = new List<Bitmap>();
         public List<Bitmap> idle = new List<Bitmap>();
         public List<Bitmap> attack_right = new List<Bitmap>();
         public List<Bitmap> attack_left = new List<Bitmap>();
+        public List<Bitmap> hurt = new List<Bitmap>();
         public bool is_move_right = true, is_dead=false, is_touched_hero;
         public int attack_frame_index = 0;
         public bool is_attacking = false;
@@ -58,6 +60,10 @@ namespace long_game_project
         public int ATTACK_RANGE = 100;
         public int DETECTION_RANGE = 600;
         public bool is_in_cooldown = false;
+        public int health = 5;
+        public bool is_hurt = false;
+        public int hurt_frame_index = 0;
+        public int fly_count = 0;  // Counter for fly animation cycles
 
     }
     class cadvancedimgactor
@@ -80,6 +86,7 @@ namespace long_game_project
         List<cimgactor> arrows= new List<cimgactor>();
         cenemyactor python = new cenemyactor();
         cenemyactor wolf = new cenemyactor();  
+        cenemyactor dragon = new cenemyactor();
         int dead_flag = 0,hero_dead_waiting_time=0;
         cadvancedimgactor pnn = new cadvancedimgactor();
         int scrollpositionx = 0;
@@ -113,12 +120,15 @@ namespace long_game_project
             movearrow();
             jump();
             if_idle();
-            move_python();
+            move_dragon();
             move_wolf();
+            move_python();
             enemy_hit_from_arrow(python);
             enemy_hit_from_arrow(wolf);
+            enemy_hit_from_arrow(dragon);
             check_hero_health_if_touch(python);
             check_hero_health_if_touch(wolf);
+            check_hero_health_if_touch(dragon);
             this.Text=hero.hero_health.ToString();
             
             drawdb();
@@ -197,13 +207,11 @@ namespace long_game_project
                 {
                     python.dead_frame_index = python.dead.Count - 1;
                 }
-
                 python_current_image = python.dead[python.dead_frame_index];
-
-                if (python.dead_frame_index < python.dead.Count - 1)
-                {
-                    python.dead_frame_index++;
-                }
+            }
+            else if (python.is_hurt)
+            {
+                python_current_image = python.hurt[python.hurt_frame_index];
             }
             else
             {
@@ -241,7 +249,14 @@ namespace long_game_project
                     
                     break;
                 case 1:
-                    hero_current_image = hero.shot_imges[hero.shot_frame_index];
+                    if(hero.is_move_right)
+                    {
+                        hero_current_image = hero.shot_r_imges[hero.shot_frame_index];
+                    }
+                    else
+                    {
+                        hero_current_image = hero.shot_l_imges[hero.shot_frame_index];
+                    }
                     break;
                 case 2:
                     if (hero.is_move_right)
@@ -256,8 +271,6 @@ namespace long_game_project
                 case 3:
                     hero_current_image = hero.dead_imges[hero.dead_frame_index];
                     break;
-
-
                 default:
                     hero_current_image = hero.idle_imges[0];
                     break;
@@ -344,40 +357,55 @@ namespace long_game_project
         {
             if (f_flag == 1)
             {
-
                 hero.shot_frame_index++;
                 hero.display_flag = 1;
-
-
-
 
                 if (hero.shot_frame_index > 10)
                 {
                     hero.shot_frame_index = 0;
                     hero.display_flag = 0;
 
-
-               
                     cimgactor pnn = new cimgactor();
-                    pnn.img = new Bitmap("arrow.png");
-                    pnn.x = hero.x + hero.shot_imges[hero.shot_frame_index].Width;
-                    pnn.y = hero.y + (hero.shot_imges[hero.shot_frame_index].Height / 2)-20;
+                    // Store the direction when the arrow is created
+                    pnn.is_moving_right = hero.is_move_right;
+                    
+                    if (pnn.is_moving_right)
+                    {
+                        pnn.img = new Bitmap("arrow right.png");
+                        pnn.x = hero.x + hero.shot_r_imges[hero.shot_frame_index].Width;
+                    }
+                    else
+                    {
+                        pnn.img = new Bitmap("arrow left.png");
+                        pnn.x = hero.x - hero.shot_r_imges[hero.shot_frame_index].Width;
+                    }
+                    pnn.y = hero.y + (hero.shot_r_imges[hero.shot_frame_index].Height / 2) - 20;
                     arrows.Add(pnn);
                 }
-                
-                
             }
         }
         void movearrow()
         {
             for (int i = 0; i < arrows.Count; i++)
             {
-
-                arrows[i].x += 20;
-                if (arrows[i].x+ arrows[i].img.Width > this.ClientSize.Width)
+                // Move arrow based on its stored direction
+                if (arrows[i].is_moving_right)
                 {
-                    arrows.RemoveAt(i);
-                    i--;
+                    arrows[i].x += 20;
+                    if (arrows[i].x + arrows[i].img.Width > this.ClientSize.Width)
+                    {
+                        arrows.RemoveAt(i);
+                        i--;
+                    }
+                }
+                else
+                {
+                    arrows[i].x -= 20;
+                    if (arrows[i].x < 0)
+                    {
+                        arrows.RemoveAt(i);
+                        i--;
+                    }
                 }
             }
         }
@@ -452,29 +480,7 @@ namespace long_game_project
 
 
         }
-        void drawscene(Graphics g2)
-        {
-            g2.Clear(Color.White);
-           
-           
-            hero_display(g2);
-            python_display(g2);
-            wolf_display(g2);
-            arrow_display(g2);
-
-
-
-
-
-
-
-           
-
-           
-            
-
-           
-        }
+       
         void enemy_hit_from_arrow(cenemyactor enemy)
         {
             if (arrows.Count > 0)
@@ -483,131 +489,52 @@ namespace long_game_project
                 {
                     if (arrows[i].x > enemy.x && arrows[i].x < enemy.x + enemy.run_right[enemy.wf].Width)
                     {
-                        if (arrows[i].y > enemy.y && arrows[i].y < enemy.y + enemy.run_right[enemy.wf].Height)
+                        if (arrows[i].y > enemy.y && arrows[i].y < enemy.y + enemy.run_right[enemy.wf].Height && !enemy.is_dead)
                         {
                             arrows.RemoveAt(i);
                             i--;
-                            enemy.is_dead = true;
-                            enemy.dir = 0;
+                            enemy.health--;
+                            enemy.is_hurt = true;
+                            enemy.hurt_frame_index = 0;
+                            
+                            // Put enemy in cooldown when hit
+                            enemy.is_in_cooldown = true;
+                            enemy.attack_cooldown = 15; // Adjust this value to change cooldown duration
+                            
+                            if (enemy.health <= 0)
+                            {
+                                enemy.is_dead = true;
+                                enemy.dir = 0;
+                                enemy.dead_frame_index = 0;
+                            }
                             break;
                         }
                     }
                 }
             }
-            if (python.is_dead)
-            {
-                python.revive_waiting_time++;
-                if( python.revive_waiting_time>50)
-                {
-                    python.revive_waiting_time = 0;
-                    python.is_dead = false;
-                    python.dir = 10;
-                   
-                   
-                }
-              
 
+            // Handle hurt animation
+            if (enemy.is_hurt)
+            {
+                enemy.hurt_frame_index++;
+                if (enemy.hurt_frame_index >= enemy.hurt.Count)
+                {
+                    enemy.is_hurt = false;
+                    enemy.hurt_frame_index = 0;
+                }
+            }
+
+            if (enemy.is_dead)
+            {
+                enemy.dead_frame_index++;
+                if (enemy.dead_frame_index >= enemy.dead.Count)
+                {
+                    enemy.dead_frame_index = enemy.dead.Count - 1;
+                }
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // walk 
-            off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
-
-            Bitmap temp;
-            for (int i = 0; i < 8; i++)
-            {
-                 temp = new Bitmap("walk/"+i+".png");
-                hero.walk_r_imges.Add(temp);
-                 temp = new Bitmap("walk_left/" + i+".png");
-             
-
-                hero.walk_l_imges.Add(temp);
-
-            }
-                hero.x = this.ClientSize.Width-hero.walk_r_imges[0].Width;
-                hero.y = 445 ;
-            // shot
-            for (int i = 0; i < 11; i++)
-            {
-                 temp = new Bitmap("shot/" + (i ) + ".png");
-                hero.shot_imges.Add(temp);
-            }
-            // dead
-
-            for (int i = 0; i < 5; i++)
-            {
-                 temp = new Bitmap("dead/" + (i) + ".png");
-                hero.dead_imges.Add(temp);
-            }
-            // jump right 
-            for (int i = 0; i < 9; i++)
-            {
-                 temp = new Bitmap("jump/0" + (i) + "_jump.png");
-                hero.jump_right_imges.Add(temp);
-            }
-            // jump left
-            for (int i = 0; i < 9; i++)
-            {
-                temp = new Bitmap("jump_left/0" + (i) + "_0.png");
-                hero.jump_left_imges.Add(temp);
-            }
-            // idle
-            for (int i = 0; i < 8; i++)
-            {
-                temp = new Bitmap("idle/0" + (i) + "_idle.png");
-                hero.idle_imges.Add(temp);
-            }
-            // python
-            
-            for (int i = 0; i < 6; i++)
-            {
-                temp = new Bitmap("python/0" + (i) + "_R.png");
-             python.run_right.Add(temp);
-                temp = new Bitmap("python_left/0" + (i) + "_r_r.png");
-             python.run_left.Add(temp);
-                if (i<3)
-                {
-
-                temp = new Bitmap( i +".png");
-                python.dead.Add(temp);
-                }
-               
-                python.x = 200;
-                python.y = 445;
-                //creatbackground();
-
-            }
-
-            // Load wolf images
-            for (int i = 0; i < 6; i++)
-            {
-                //00_Attack_3
-                wolf.idle.Add(new Bitmap("wolf idle/0" + i + "_Idle.png"));
-                wolf.run_right.Add(new Bitmap("wolf run right/0" + i + "_Run.png"));
-                if(i<=4)
-                wolf.attack_right.Add(new Bitmap("wolf attak right/0" + i + "_Attack_3.png"));
-            }
-
-            // Create left-facing versions of run and attack animations
-            for (int i = 0; i < wolf.run_right.Count; i++)
-            {
-                wolf.run_left.Add(new Bitmap("wolf Run left/0"+i+"_.png"));
-               
-            }
-
-            for (int i = 0; i < wolf.attack_right.Count; i++)
-            {
-                wolf.attack_left.Add(new Bitmap("wolf attak left/0" + i + "_0.png"));
-               
-            }
-
-            //  wolf position
-            wolf.x = 500;
-            wolf.y = 300;
-            wolf.is_move_right = true;
-
+      
             void creatbackground()
             {
                
@@ -618,7 +545,7 @@ namespace long_game_project
 
 
 
-        }
+        
 
         void move_wolf()
         {
@@ -746,5 +673,227 @@ namespace long_game_project
 
             g2.DrawImage(wolf_current_image, wolf.x, wolf.y);
         }
+
+        void move_dragon()
+        {
+            if (dragon.is_dead) return;
+
+            // Handle flame animation
+            if (dragon.is_attacking)
+            {
+                dragon.attack_frame_index++;
+                if (dragon.attack_frame_index >= dragon.attack_right.Count)
+                {
+                    dragon.is_attacking = false;
+                    dragon.wf = 0;  // Reset flying animation when flame ends
+                    dragon.fly_count = 0;  // Reset fly count
+                }
+            }
+            else
+            {
+                // Update flying animation
+                dragon.wf++;
+                if (dragon.wf >= dragon.run_right.Count)
+                {
+                    dragon.wf = 0;
+                    dragon.fly_count++;  // Increment fly count
+                    
+                    // After completing two fly animation cycles, start flame animation
+                    if (dragon.fly_count >= 5)
+                    {
+                        dragon.is_attacking = true;
+                        dragon.attack_frame_index = 0;
+                    }
+                }
+            }
+
+            // Move dragon (now moves even while attacking)
+            dragon.x += dragon.dir;
+
+            if (dragon.x < 0)
+            {
+                dragon.is_move_right = true;
+                dragon.dir = 10;
+            }
+
+            if (dragon.x + dragon.run_right[dragon.wf].Width > ClientSize.Width)
+            {
+                dragon.is_move_right = false;
+                dragon.dir = -10;
+            }
+        }
+
+        void dragon_display(Graphics g2)
+        {
+            Bitmap dragon_current_image;
+
+            if (dragon.is_dead)
+            {
+                // Handle death animation if you have one
+                return;
+            }
+            else if (dragon.is_attacking)
+            {
+                if (dragon.is_move_right)
+                {
+                    dragon_current_image = dragon.attack_right[dragon.attack_frame_index];
+                }
+                else
+                {
+                    dragon_current_image = dragon.attack_left[dragon.attack_frame_index];
+                }
+            }
+            else
+            {
+                if (dragon.is_move_right)
+                {
+                    dragon_current_image = dragon.run_right[dragon.wf];
+                }
+                else
+                {
+                    dragon_current_image = dragon.run_left[dragon.wf];
+                }
+            }
+
+            g2.DrawImage(dragon_current_image, dragon.x, dragon.y);
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // walk 
+            off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+
+            Bitmap temp;
+            for (int i = 0; i < 8; i++)
+            {
+                temp = new Bitmap("walk/" + i + ".png");
+                hero.walk_r_imges.Add(temp);
+                temp = new Bitmap("walk_left/" + i + ".png");
+
+
+                hero.walk_l_imges.Add(temp);
+
+            }
+            hero.x = this.ClientSize.Width - hero.walk_r_imges[0].Width;
+            hero.y = 445;
+            // shot
+            for (int i = 0; i < 11; i++)
+            {
+                temp = new Bitmap("shot right/" + (i) + ".png");
+                hero.shot_r_imges.Add(temp);
+                temp = new Bitmap("shot left/" + (i) + ".png");
+                hero.shot_l_imges.Add(temp);
+            }
+            // dead
+
+            for (int i = 0; i < 5; i++)
+            {
+                temp = new Bitmap("dead/" + (i) + ".png");
+                hero.dead_imges.Add(temp);
+            }
+            // jump right 
+            for (int i = 0; i < 9; i++)
+            {
+                temp = new Bitmap("jump/0" + (i) + "_jump.png");
+                hero.jump_right_imges.Add(temp);
+            }
+            // jump left
+            for (int i = 0; i < 9; i++)
+            {
+                temp = new Bitmap("jump_left/0" + (i) + "_0.png");
+                hero.jump_left_imges.Add(temp);
+            }
+            // idle
+            for (int i = 0; i < 8; i++)
+            {
+                temp = new Bitmap("idle/0" + (i) + "_idle.png");
+                hero.idle_imges.Add(temp);
+            }
+            // python
+
+            for (int i = 0; i < 6; i++)
+            {
+                temp = new Bitmap("python/0" + (i) + "_R.png");
+                python.run_right.Add(temp);
+                temp = new Bitmap("python_left/0" + (i) + "_r_r.png");
+                python.run_left.Add(temp);
+                if (i < 3)
+                {
+                    temp = new Bitmap(i + ".png");
+                    python.dead.Add(temp);
+                }
+                // Load hurt animation
+                if (i < 2)
+                {
+
+                    temp = new Bitmap("python Hurt/0" + i + "_hurt.png");
+                    python.hurt.Add(temp);
+                }
+
+                python.x = 200;
+                python.y = 445;
+            }
+
+            // Load wolf images
+            for (int i = 0; i < 6; i++)
+            {
+                //00_Attack_3
+                wolf.idle.Add(new Bitmap("wolf idle/0" + i + "_Idle.png"));
+                wolf.run_right.Add(new Bitmap("wolf run right/0" + i + "_Run.png"));
+                if (i <= 4)
+                    wolf.attack_right.Add(new Bitmap("wolf attak right/0" + i + "_Attack_3.png"));
+            }
+
+            // Load wolf dead animation
+            for (int i = 0; i < 2; i++)
+            {
+                wolf.dead.Add(new Bitmap("wolfdead/0" + i + "_wolfDead.png"));
+            }
+
+            // Create left-facing versions of run and attack animations
+            for (int i = 0; i < wolf.run_right.Count; i++)
+            {
+                wolf.run_left.Add(new Bitmap("wolf Run left/0" + i + "_.png"));
+            }
+
+            for (int i = 0; i < wolf.attack_right.Count; i++)
+            {
+                wolf.attack_left.Add(new Bitmap("wolf attak left/0" + i + "_0.png"));
+            }
+
+            //  wolf position
+            wolf.x = 300;
+            wolf.y = 445;
+            wolf.is_move_right = true;
+
+            // Load dragon images
+            for (int i = 0; i < 6; i++)
+            {
+                temp = new Bitmap("dragon fly right/0" + i + "_0.png");
+                dragon.run_right.Add(temp);
+                temp = new Bitmap("dragon fly left/0" + i + "_0.png");
+                dragon.run_left.Add(temp);
+                temp = new Bitmap("dragon flame right/0" + i + "_1.png");
+                dragon.attack_right.Add(temp);
+                temp = new Bitmap("dragon flame left/0" + i + "_2.png");
+                dragon.attack_left.Add(temp);
+            }
+
+            // Set dragon initial position
+            dragon.x = 400;
+            dragon.y = 200;
+            dragon.is_move_right = true;
+            dragon.dir = 10;
+        }
+            void drawscene(Graphics g2)
+        {
+            g2.Clear(Color.White);
+
+            hero_display(g2);
+            wolf_display(g2);
+            dragon_display(g2);
+            arrow_display(g2);
+            python_display(g2);
+        }
     }
+
 }
