@@ -85,7 +85,7 @@ namespace long_game_project
         cimghero hero = new cimghero();
         Bitmap off ;
         int rightflag = 0, leftflag = 0, upflag = 0, downflag = 0, spaceflag = 0,
-            f_flag = 0,f_scroll_R=-1, f_scroll_L = -1, f_scroll_UP = -1, f_scroll_DOWN = -1,A,B,F_hit_blok=-1;
+            f_flag = 0,f_scroll_R=-1, f_scroll_L = -1, f_scroll_UP = -1, f_scroll_DOWN = -1,A,B,F_hit_blok=-1, F_lo=0,F_g;
 
 
         bool isjump = false;
@@ -109,6 +109,9 @@ namespace long_game_project
         List<cimgactor> stair_le1 = new List<cimgactor>();
         List<cimgactor> trav_le1 = new List<cimgactor>();
 
+        List<cimgactor> python_block_le1 = new List<cimgactor>();
+        List<cimgactor> dragon_block_le1 = new List<cimgactor>();
+        List<cimgactor> wolf_block_le1 = new List<cimgactor>();
 
 
         public Form1()
@@ -234,21 +237,21 @@ namespace long_game_project
                 pnn.img = new Bitmap("block/tile1.png");
                 pnn.x = 0 + xx;
                 pnn.y = ClientSize.Height - yy - 70;
-                block_le1.Add(pnn);
+                wolf_block_le1.Add(pnn);
                 for (int o = 0; o < 21; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
                     pnnr1.y = ClientSize.Height - yy - 70;
-                    block_le1.Add(pnnr1);
+                    wolf_block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
                 pnn2.y = ClientSize.Height - yy - 70;
-                block_le1.Add(pnn2);
+                wolf_block_le1.Add(pnn2);
 
             }
 
@@ -295,21 +298,21 @@ namespace long_game_project
                 pnn.img = new Bitmap("block/tile1.png");
                 pnn.x = 0 + xx;
                 pnn.y = ClientSize.Height - yy - 70-300;
-                block_le1.Add(pnn);
+                dragon_block_le1.Add(pnn);
                 for (int o = 0; o < 10; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
                     pnnr1.y = ClientSize.Height - yy - 70-300;
-                    block_le1.Add(pnnr1);
+                    dragon_block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
                 pnn2.y = ClientSize.Height - yy - 70-300;
-                block_le1.Add(pnn2);
+                dragon_block_le1.Add(pnn2);
 
             }
 
@@ -336,19 +339,19 @@ namespace long_game_project
                 pnn2.y = ClientSize.Height - yy - 70 - 500;
                 block_le1.Add(pnn2);
             }
-
+            /////////////////////////////////////
             xx += 200;
             for (int i = 0; i < 1; i++)
             {
                
 
-                for (int o = 0; o < 1; o++)
+                for (int o = 0; o < 8; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
                     pnnr1.y = ClientSize.Height - yy - 70 - 500;
-                    block_le1.Add(pnnr1);
+                    python_block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
 
@@ -358,7 +361,7 @@ namespace long_game_project
                 B = 850;
                 A = 700;
                 pnn2.y = ClientSize.Height - yy - 70 - 500;
-                block_le1.Add(pnn2);
+                python_block_le1.Add(pnn2);
                 int count = block_le1.Count;
                 count = block_le1.Count;
             }
@@ -547,13 +550,28 @@ namespace long_game_project
                     {
                         trav_le1[i].x += 20;
                     }
+
+                    for (int i = 0; i < python_block_le1.Count; i++)
+                    {
+                        python_block_le1[i].x += 20;
+                    }
+
+
+                    for (int i = 0; i < wolf_block_le1.Count; i++)
+                    {
+                        wolf_block_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < dragon_block_le1.Count; i++)
+                    {
+                        dragon_block_le1[i].x += 20;
+                    }
                     // Only move wolf if it's within visible area
                     if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
                     {
                         wolf.x += 20;
                     }
                     // Only move dragon if it's within its boundaries
-                    if (dragon.x >= block_le1[57].x && dragon.x <= block_le1[69].x + block_le1[69].img.Width)
+                    if (dragon.x >= dragon_block_le1[0].x && dragon.x <= dragon_block_le1[dragon_block_le1.Count - 1].x + dragon_block_le1[dragon_block_le1.Count - 1].img.Width)
                     {
                         dragon.x += 20;
                     }
@@ -561,6 +579,7 @@ namespace long_game_project
                     {
                         python.x += 20;
                     }
+
 
                 }
             }
@@ -596,13 +615,27 @@ namespace long_game_project
                     {
                         trav_le1[i].x -= 20;
                     }
+                    for (int i = 0; i < python_block_le1.Count; i++)
+                    {
+                        python_block_le1[i].x -= 20;
+                    }
+
+
+                    for (int i = 0; i < wolf_block_le1.Count; i++)
+                    {
+                        wolf_block_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < dragon_block_le1.Count; i++)
+                    {
+                        dragon_block_le1[i].x -= 20;
+                    }
                     // Only move wolf if it's within visible area
                     if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
                     {
                         wolf.x -= 20;
                     }
                     // Only move dragon if it's within its boundaries
-                    if (dragon.x >= block_le1[57].x && dragon.x <= block_le1[69].x + block_le1[69].img.Width)
+                    if (dragon.x >= dragon_block_le1[0].x && dragon.x <= dragon_block_le1[dragon_block_le1.Count-1].x + dragon_block_le1[dragon_block_le1.Count - 1].img.Width)
                     {
                         dragon.x -= 20;
                     }
@@ -686,7 +719,7 @@ namespace long_game_project
         }
         int get_ground_y()
         {
-            int groundY = int.MaxValue;
+            int groundY = 9999999;
 
             foreach (var block in block_down_le1.Concat(block_le1))
             {
@@ -698,6 +731,7 @@ namespace long_game_project
                     int thisY = block.y - hero.H;
                     if (thisY < groundY)
                         groundY = thisY;
+                    
                 }
             }
 
@@ -749,6 +783,27 @@ namespace long_game_project
                     }
                 }
             }
+
+            if (python_block_le1[0].x >= 700 && python_block_le1[0].x <= 720)
+            {
+                F_lo = 1;
+            }
+            if (F_lo != 1)
+            {
+                python.x = python_block_le1[0].x;
+                wolf.x = wolf_block_le1[wolf_block_le1.Count / 2].x;
+            }
+            int groundY = get_ground_y();
+
+            if (hero.y < groundY - 10)
+            {
+                hero.y += 10; 
+            }
+            else
+            {
+                hero.y = groundY; 
+            }
+
             movehero();
             shot();
             movearrow();
@@ -764,7 +819,7 @@ namespace long_game_project
             check_hero_health_if_touch(wolf);
             check_hero_health_if_touch(dragon);
             //this.Text=hero.hero_health.ToString();
-            //this.Text=hero.x.ToString();
+            this.Text = hero.x.ToString();
             scllor();
             drawdb();
         }
@@ -804,19 +859,19 @@ namespace long_game_project
 
             python.x += python.dir ;
 
-            if (python.x < block_le1[80].x)
+            if (python.x + python.run_right[python.wf].Width > python_block_le1[python_block_le1.Count-1].x+50)
+            {
+                python.is_move_right = false;
+                python.dir = -5;
+
+            }
+            if (python.x < python_block_le1[0].x)
             {
                 python.is_move_right = true;
                 python.dir = 5;
 
             }
 
-            if (python.x + python.run_right[python.wf].Width > block_le1[block_le1.Count-4].x)
-            {
-                python.is_move_right = false;
-                python.dir = -5;
-
-            }
            
            
         }
@@ -1101,7 +1156,7 @@ namespace long_game_project
             {
                 case Keys.W:
                     upflag = 0;
-
+                    
                     break;
                 case Keys.A:
                     leftflag = 0;
@@ -1306,12 +1361,9 @@ namespace long_game_project
                 }
 
                 // Get current positions of lava and stairs
-                int lavaStartX = lava_le1[lava_le1.Count-1].x;
-                int stairsX = stair_le1[0].x;
+                int lavaStartX = wolf_block_le1[wolf_block_le1.Count-1].x;
+                int stairsX = wolf_block_le1[0].x;
 
-                // Only move if wolf is within visible area (with some margin)
-                if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
-                {
                     // Patrol movement
                     if (wolf.is_move_right)
                     {
@@ -1329,7 +1381,6 @@ namespace long_game_project
                             wolf.is_move_right = true;
                         }
                     }
-                }
             }
         }
 
@@ -1419,8 +1470,8 @@ namespace long_game_project
             }
 
             // Get the patrol boundaries from block_le1
-            int leftBoundary = block_le1[57].x;
-            int rightBoundary = block_le1[69].x + block_le1[69].img.Width;
+            int leftBoundary = dragon_block_le1[0].x;
+            int rightBoundary = dragon_block_le1[dragon_block_le1.Count-1].x + dragon_block_le1[0].img.Width;
 
             // Only move dragon if it's within its boundaries
             if (dragon.x >= leftBoundary && dragon.x <= rightBoundary)
@@ -1566,8 +1617,8 @@ namespace long_game_project
                     python.hurt.Add(temp);
                 }
 
-                python.x = block_le1[80].x;
-                python.y = this.ClientSize.Height - 560;
+                python.x = python_block_le1[0].x;
+                python.y = python_block_le1[0].y - python.run_right[0].Height+17;
             }
 
             // Load wolf images
@@ -1599,7 +1650,7 @@ namespace long_game_project
 
             //  wolf position - start near lava
             wolf.x = lava_le1[0].x;
-            wolf.y = this.ClientSize.Height - 70 - wolf.idle[0].Height;
+            wolf.y = this.ClientSize.Height - 70 - wolf.idle[0].Height+15;
             wolf.is_move_right = true;
 
             // Load dragon images
@@ -1616,8 +1667,8 @@ namespace long_game_project
             }
 
             // Set dragon initial position
-            dragon.x = block_le1[57].x;  // Start at the left boundary
-            dragon.y = 100;
+            dragon.x = dragon_block_le1[0].x;  // Start at the left boundary
+            dragon.y = dragon_block_le1[0].img.Height+100;
             dragon.is_move_right = true;
             dragon.dir = 10;
         }
@@ -1657,6 +1708,21 @@ namespace long_game_project
             for (int i = 0; i < trav_le1.Count; i++)
             {
                 g2.DrawImage(trav_le1[i].img, trav_le1[i].x, trav_le1[i].y);
+            }
+
+            for (int i = 0; i < python_block_le1.Count; i++)
+            {
+                g2.DrawImage(python_block_le1[i].img, python_block_le1[i].x, python_block_le1[i].y);
+            }
+
+
+            for (int i = 0; i < wolf_block_le1.Count; i++)
+            {
+                g2.DrawImage(wolf_block_le1[i].img, wolf_block_le1[i].x, wolf_block_le1[i].y);
+            }
+            for (int i = 0; i < dragon_block_le1.Count; i++)
+            {
+                g2.DrawImage(dragon_block_le1[i].img, dragon_block_le1[i].x, dragon_block_le1[i].y);
             }
             hero_display(g2);
             wolf_display(g2);
