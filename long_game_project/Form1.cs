@@ -32,13 +32,14 @@ namespace long_game_project
         public List<Bitmap>jump_right_imges = new List<Bitmap>();
         public List<Bitmap>jump_left_imges = new List<Bitmap>();
         public List<Bitmap>idle_imges = new List<Bitmap>();
-
+        public int H;
+        public int W;
 
 
     }
     class cimgactor// used in arrows 
     {
-        public int x, y, oldx;
+        public int x, y, oldx,xd=-1,dy=-1;
         public Bitmap img;
         public bool is_moving_right;
     }
@@ -71,15 +72,22 @@ namespace long_game_project
             public Bitmap img;
             public Rectangle recdst;
             public Rectangle recsrc;
+    }
 
-
+    public class MUCImgActor
+    {
+        public int x, y, xd = 1, xy = 1, f = 0;
+        public List<Bitmap> imgs = new List<Bitmap>();
+        public int iF = 0;
     }
     public partial class Form1 : Form
     {
         cimghero hero = new cimghero();
         Bitmap off ;
-        int rightflag = 0, leftflag = 0, upflag = 0, downflag = 0, spaceflag = 0, f_flag = 0;
-        
+        int rightflag = 0, leftflag = 0, upflag = 0, downflag = 0, spaceflag = 0,
+            f_flag = 0,f_scroll_R=-1, f_scroll_L = -1, f_scroll_UP = -1, f_scroll_DOWN = -1,A,B,F_hit_blok=-1;
+
+
         bool isjump = false;
         int jump_count=0;
         Timer tt = new Timer();
@@ -92,6 +100,14 @@ namespace long_game_project
         int scrollpositionx = 0;
 
 
+        List<cadvancedimgactor> Background_le1 = new List<cadvancedimgactor>();
+        List<MUCImgActor> lava_le1 = new List<MUCImgActor>();
+        List<cimgactor> block_le1 = new List<cimgactor>();
+        List<cimgactor> block_down_le1 = new List<cimgactor>();
+        List<cimgactor> door_le1 = new List<cimgactor>();
+        List<cimgactor> linedoor_le1 = new List<cimgactor>();
+        List<cimgactor> stair_le1 = new List<cimgactor>();
+        List<cimgactor> trav_le1 = new List<cimgactor>();
 
 
 
@@ -107,7 +123,606 @@ namespace long_game_project
             this.WindowState = FormWindowState.Maximized;
             MouseDown += Form1_MouseDown;
         }
+        ///
 
+        void creat_Background_le1()
+        {
+            cadvancedimgactor pnn = new cadvancedimgactor();
+            pnn.img = new Bitmap("background/Background_le1.png");
+            pnn.recdst = new Rectangle(0, 0, Width, Height);
+            pnn.recsrc = new Rectangle(0, 0, pnn.img.Width, pnn.img.Height);
+            Background_le1.Add(pnn);
+        }
+        void creat_block_le1()
+        {
+            int yy = 0;
+            int xx = 0;
+            int x = 0;
+
+            ///ard
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = 0 + xx;
+                pnn.y = 770 - yy;
+                block_le1.Add(pnn);
+                for (int o = 0; o < 20; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 770 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 770 - yy;
+                block_le1.Add(pnn2);
+
+            }
+            yy = 0;
+            xx = 1200;
+            x = 0;
+            //down rocik1
+            for (int i = 0; i < 3; i++)
+            {
+                x = 0;
+                if (i != 0)
+                {
+
+                    cimgactor pnn = new cimgactor();
+                    pnn.img = new Bitmap("block/tile1.png");
+                    pnn.x = 0 + xx;
+                    pnn.y = 770 - yy;
+                    block_down_le1.Add(pnn);
+
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 770 - yy;
+                    block_down_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+
+                    cimgactor pnn2 = new cimgactor();
+                    pnn2.img = new Bitmap("block/tile3.png");
+                    pnn2.x = (50 + x) + xx;
+                    pnn2.y = 770 - yy;
+                    block_down_le1.Add(pnn2);
+                }
+                yy += 100;
+                xx += 200;
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                yy -= 100;
+                xx += 70;
+                x = 0;
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = 50 + xx;
+                pnn.y = 770 - yy;
+                block_down_le1.Add(pnn);
+
+
+                cimgactor pnnr1 = new cimgactor();
+                pnnr1.img = new Bitmap("block/tile2.png");
+                pnnr1.x = (0 + x) + xx;
+                pnnr1.y = 770 - yy;
+                block_down_le1.Add(pnnr1);
+                x += pnnr1.img.Width;
+
+
+
+                cimgactor pnn3 = new cimgactor();
+                pnn3.img = new Bitmap("block/tile3.png");
+                pnn3.x = (50 + x) + xx;
+                pnn3.y = 770 - yy;
+                block_down_le1.Add(pnn3);
+                xx += 150;
+            }
+
+            yy = 0;
+            xx = 2320;
+            x = 0;
+            ///ard
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = 0 + xx;
+                pnn.y = 770 - yy;
+                block_le1.Add(pnn);
+                for (int o = 0; o < 21; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 770 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 770 - yy;
+                block_le1.Add(pnn2);
+
+            }
+
+            //////fok elsylm
+            yy = 0;
+            xx = 3000;
+            x = 0;
+            ///ard
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = 0 + xx;
+                pnn.y = 500 - yy;
+                block_le1.Add(pnn);
+                for (int o = 0; o < 10; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 500 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 500 - yy;
+                block_le1.Add(pnn2);
+
+            }
+            //bolkfok
+            yy = 0;
+            xx = 300;
+            x = 0;
+            ///ard
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = 0 + xx;
+                pnn.y = 400 - yy;
+                block_le1.Add(pnn);
+                for (int o = 0; o < 10; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 400 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 400 - yy;
+                block_le1.Add(pnn2);
+
+            }
+            xx += 200;
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = (0 + xx)+x;
+                pnn.y = 400 - yy;
+                block_le1.Add(pnn);
+
+                for (int o = 0; o < 13; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 400 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 400 - yy;
+                block_le1.Add(pnn2);
+
+            }
+
+            xx += 200;
+            for (int i = 0; i < 1; i++)
+            {
+                cimgactor pnn = new cimgactor();
+                pnn.img = new Bitmap("block/tile1.png");
+                pnn.x = (0 + xx) + x;
+                pnn.y = 400 - yy;
+                block_le1.Add(pnn);
+                A = pnn.x;
+                for (int o = 0; o < 8; o++)
+                {
+                    cimgactor pnnr1 = new cimgactor();
+                    pnnr1.img = new Bitmap("block/tile2.png");
+                    pnnr1.x = (50 + x) + xx;
+                    pnnr1.y = 400 - yy;
+                    block_le1.Add(pnnr1);
+                    x += pnnr1.img.Width;
+                }
+                cimgactor pnn2 = new cimgactor();
+                pnn2.img = new Bitmap("block/tile3.png");
+                pnn2.x = (50 + x) + xx;
+                pnn2.y = 400 - yy;
+                block_le1.Add(pnn2);
+                B = pnn2.x;
+
+            }
+        }
+        void creat_door_le1()
+        {
+            int x = 0, xx = 0, yy = 0;
+
+            x = 0;
+            cimgactor pnn = new cimgactor();
+            pnn.img = new Bitmap("block/tile1.png");
+            pnn.x = 0 + xx;
+            pnn.y = 370 - yy;
+            block_le1.Add(pnn);
+
+            for (int i = 0; i < 2; i++)
+            {
+                cimgactor pnnr1 = new cimgactor();
+                pnnr1.img = new Bitmap("block/tile2.png");
+                pnnr1.x = (50 + x) + xx;
+                pnnr1.y = 370 - yy;
+                block_le1.Add(pnnr1);
+                x += pnnr1.img.Width;
+            }
+            cimgactor pnn2 = new cimgactor();
+            pnn2.img = new Bitmap("block/tile3.png");
+            pnn2.x = (50 + x) + xx;
+            pnn2.y = 370 - yy;
+            block_le1.Add(pnn2);
+            yy += 100;
+            xx += 200;
+
+            cimgactor pnndo = new cimgactor();
+            pnndo.img = new Bitmap("door/door_le1.png");
+            pnndo.x = 0;
+            pnndo.y = 250;
+            door_le1.Add(pnndo);
+
+            //linedoor
+            yy = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                cimgactor pnnr1 = new cimgactor();
+                pnnr1.img = new Bitmap("block/tile6.png");
+                pnnr1.x = 170;
+                pnnr1.y = (-30) + yy;
+                linedoor_le1.Add(pnnr1);
+                yy += 50;
+            }
+
+        }
+        void creat_trav_le1()
+        {
+
+            cimgactor pnn = new cimgactor();
+            pnn.img = new Bitmap("block/tile1.png");
+            pnn.x = 2800;
+            pnn.y = 490;
+            trav_le1.Add(pnn);
+
+            cimgactor pnnr1 = new cimgactor();
+            pnnr1.img = new Bitmap("block/tile2.png");
+            pnnr1.x = 2850;
+            pnnr1.y = 490;
+            trav_le1.Add(pnnr1);
+
+            cimgactor pnn2 = new cimgactor();
+            pnn2.img = new Bitmap("block/tile3.png");
+            pnn2.x = 2900;
+            pnn2.y = 490;
+            trav_le1.Add(pnn2);
+
+        }
+        void creat_stair_le1()
+        {
+            int yy = 0;
+
+            cimgactor pnn = new cimgactor();
+            pnn.img = new Bitmap("stair/stair1.png");
+            pnn.x = 3500;
+            pnn.y = 530;
+            stair_le1.Add(pnn);
+            for (int i = 0; i < 7; i++)
+            {
+                yy += pnn.img.Height;
+                cimgactor pnn1 = new cimgactor();
+                pnn1.img = new Bitmap("stair/stair2.png");
+                pnn1.x = 3500;
+                pnn1.y = 530 + yy;
+                stair_le1.Add(pnn1);
+            }
+        }
+        void creat_lava_le1()
+        {
+            //lava_tile5
+
+            MUCImgActor pnn = new MUCImgActor();
+            pnn.imgs = new List<Bitmap>();
+            Bitmap pnnimg = new Bitmap("lava/lava_tile5.png");
+            pnn.imgs.Add(pnnimg);
+            pnnimg = new Bitmap("lava/lava_tile8.png");
+            pnn.imgs.Add(pnnimg);
+            pnn.x = 1350;
+            pnn.y = 770;
+            lava_le1.Add(pnn);
+            int xx = 0;
+            for (int i = 0; i < 18; i++)
+            {
+                xx += 50;
+                MUCImgActor pnn3 = new MUCImgActor();
+                pnn3.imgs = new List<Bitmap>();
+                Bitmap pnnimg3 = new Bitmap("lava/lava_tile6.png");
+                pnn3.imgs.Add(pnnimg3);
+                pnnimg3 = new Bitmap("lava/lava_tile9.png");
+                pnn3.imgs.Add(pnnimg3);
+                pnn3.x = 1350 + xx;
+                pnn3.y = 770;
+                lava_le1.Add(pnn3);
+            }
+            xx += 50;
+            MUCImgActor pnn2 = new MUCImgActor();
+            pnn2.imgs = new List<Bitmap>();
+            Bitmap pnnimg2 = new Bitmap("lava/lava_tile7.png");
+            pnn2.imgs.Add(pnnimg2);
+            pnnimg2 = new Bitmap("lava/lava_tile10.png");
+            pnn2.imgs.Add(pnnimg2);
+            pnn2.x = 1350 + xx;
+            pnn2.y = 770;
+            lava_le1.Add(pnn2);
+            //MUCImgActor pnnf = new MUCImgActor();
+            //pnn.imgs = new List<Bitmap>();
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    Bitmap pnnimgf = new Bitmap("lava_tile6.png");
+            //    pnnimgf.MakeTransparent(pnnimgf.GetPixel(0, 0));
+            //    pnnf.imgs.Add(pnnimgf);
+            //    pnnf.x = 50 + xx;
+            //    pnnf.y = 600;
+            //}
+            //lava.Add(pnnf);
+        }
+        void creat_dertion_le1()
+        {
+            int yy = 0;
+            int xx = 0;
+            int x = 0;
+
+            cimgactor pnn = new cimgactor();
+            pnn.img = new Bitmap("marker_statue/marker_statue3.png");
+            pnn.x = 200;
+            pnn.y = 700;
+            block_le1.Add(pnn);
+
+            pnn = new cimgactor();
+            pnn.img = new Bitmap("marker_statue/marker_statue3.png");
+            pnn.x = 1250;
+            pnn.y = 700;
+            block_le1.Add(pnn);
+
+            pnn = new cimgactor();
+            pnn.img = new Bitmap("marker_statue/marker_statue3.png");
+            pnn.x = 1900;
+            pnn.y = 500;
+            block_le1.Add(pnn);
+        }
+        void scllor()
+        {
+            if (leftflag == 1)
+            {
+                if (f_scroll_L==1)
+                {
+                    //if (hero.x > 700)
+                    //{
+                    //}
+                    for (int i = 0; i < block_le1.Count; i++)
+                    {
+                        block_le1[i].x += 20;
+
+                    }
+                    for (int i = 0; i < block_down_le1.Count; i++)
+                    {
+                        block_down_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < door_le1.Count; i++)
+                    {
+                        door_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < linedoor_le1.Count; i++)
+                    {
+                        linedoor_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < stair_le1.Count; i++)
+                    {
+                        stair_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < lava_le1.Count; i++)
+                    {
+                        lava_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < trav_le1.Count; i++)
+                    {
+                        trav_le1[i].x += 20;
+                    }
+                }
+            }
+            if (rightflag == 1)
+            {
+                if (f_scroll_R == 1)
+                {
+                    //if (hero.x < 700)
+                    //{
+                    //}
+                    for (int i = 0; i < block_le1.Count; i++)
+                    {
+                        block_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < block_down_le1.Count; i++)
+                    {
+                        block_down_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < door_le1.Count; i++)
+                    {
+                        door_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < linedoor_le1.Count; i++)
+                    {
+                        linedoor_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < stair_le1.Count; i++)
+                    {
+                        stair_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < lava_le1.Count; i++)
+                    {
+                        lava_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < trav_le1.Count; i++)
+                    {
+                        trav_le1[i].x -= 20;
+                    }
+                }
+            }
+            //UP
+            //if (leftflag == 1)
+            //{
+            //    if (f_scroll_L == 1)
+            //    {
+            //        for (int i = 0; i < block_le1.Count; i++)
+            //        {
+            //            block_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < block_down_le1.Count; i++)
+            //        {
+            //            block_down_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < door_le1.Count; i++)
+            //        {
+            //            door_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < linedoor_le1.Count; i++)
+            //        {
+            //            linedoor_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < stair_le1.Count; i++)
+            //        {
+            //            stair_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < lava_le1.Count; i++)
+            //        {
+            //            lava_le1[i].y += 20;
+            //        }
+            //        for (int i = 0; i < trav_le1.Count; i++)
+            //        {
+            //            trav_le1[i].y += 20;
+            //        }
+            //    }
+            //}
+            ///down
+            if (downflag == 1)
+            {
+                if (f_scroll_DOWN == 1)
+                {
+                    for (int i = 0; i < block_le1.Count; i++)
+                    {
+                        block_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < block_down_le1.Count; i++)
+                    {
+                        block_down_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < door_le1.Count; i++)
+                    {
+                        door_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < linedoor_le1.Count; i++)
+                    {
+                        linedoor_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < stair_le1.Count; i++)
+                    {
+                        stair_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < lava_le1.Count; i++)
+                    {
+                        lava_le1[i].y -= 20;
+                    }
+                    for (int i = 0; i < trav_le1.Count; i++)
+                    {
+                        trav_le1[i].y -= 20;
+                    }
+                }
+            }
+        }
+        void hit_hero_ard()
+        {
+
+                foreach (var block in block_down_le1)
+                {
+                    if (hero.y <= block.y + block.img.Height)
+                    {
+                        if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                        {
+                          //hero.y = block.y - hero.H;
+                          F_hit_blok = block.y - hero.H;
+
+                            break;
+                        }
+                    }
+                }
+
+            foreach (var block in block_le1)
+            {
+                if (hero.y <= block.y + block.img.Height)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        //hero.y = block.y - hero.H;
+                        F_hit_blok = block.y - hero.H;
+
+                        break;
+                    }
+                }
+            }
+
+        }
+        int get_ground_y()
+        {
+            int groundY = int.MaxValue;
+
+            foreach (var block in block_down_le1.Concat(block_le1))
+            {
+                bool isBelow = block.y >= hero.y + hero.H;
+                bool isOverlapping = hero.x + hero.W > block.x && hero.x < block.x + block.img.Width;
+
+                if (isBelow && isOverlapping)
+                {
+                    int thisY = block.y - hero.H;
+                    if (thisY < groundY)
+                        groundY = thisY;
+                }
+            }
+
+            return groundY;
+        }
+
+        ///
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
            this.Text=(e.X+","+e.Y).ToString();
@@ -115,6 +730,43 @@ namespace long_game_project
 
         private void Tt_Tick(object sender, EventArgs e)
         {
+            for (int i = 0; i < lava_le1.Count; i++)
+            {
+                if (lava_le1[i].iF < 1)
+                {
+                    lava_le1[i].iF++;
+                }
+                else
+                {
+                    lava_le1[i].iF = 0;
+                }
+            }
+
+            for (int i = 0; i < trav_le1.Count; i++)
+            {
+                if (trav_le1[i].dy == -1)
+                {
+                    if (trav_le1[i].y >= 260)
+                    {
+                        trav_le1[i].y -= 5;
+                    }
+                    else
+                    {
+                        trav_le1[i].dy = 1;
+                    }
+                }
+                if (trav_le1[i].dy == 1)
+                {
+                    if (trav_le1[i].y <= 510)
+                    {
+                        trav_le1[i].y += 5;
+                    }
+                    else
+                    {
+                        trav_le1[i].dy = -1;
+                    }
+                }
+            }
             movehero();
             shot();
             movearrow();
@@ -130,7 +782,11 @@ namespace long_game_project
             check_hero_health_if_touch(wolf);
             check_hero_health_if_touch(dragon);
             this.Text=hero.hero_health.ToString();
-            
+            //
+            scllor();
+
+            //hit_hero_ard();
+            //
             drawdb();
         }
         void check_hero_health_if_touch(cenemyactor enemy)
@@ -144,12 +800,7 @@ namespace long_game_project
 
                   if(hero.y + hero.walk_r_imges[hero.walk_frame_index].Height > enemy.y && hero.y < enemy.y + enemy.run_right[enemy.wf].Height)
                   {
-                  
-
-                
                     is_touching = true;
-                   
-                
                   }
                    
             }
@@ -174,18 +825,18 @@ namespace long_game_project
 
             python.x += python.dir ;
 
-            if (python.x < 0)
+            if (python.x < A)
             {
                 python.is_move_right = true;
-                python.dir = 10;
+                python.dir = 5;
 
             }
 
-            if (python.x + python.run_right[python.wf].Width > ClientSize.Width)
+            if (python.x + python.run_right[python.wf].Width > B)
             {
                 python.is_move_right = false;
-               python.dir = -10;
-                
+                python.dir = -5;
+
             }
            
            
@@ -301,58 +952,114 @@ namespace long_game_project
             if (dead_flag == 1) return;
 
             cimghero h = hero;
-            if (upflag == 1 &&jump_count==0)
-            {
-                hero.display_flag = 2;
-                isjump = true;
-            }
-            if (downflag == 1)
-            {
-                h.y += 15;
 
-            }
-            if (leftflag == 1)
+            if (hero.y >0)
             {
-                hero.display_flag = 0;
-                h.x -= 15;
-                hero.walk_frame_index--;
-                if (hero.walk_frame_index < 0) hero.walk_frame_index = 7;
+                if (upflag == 1 && jump_count == 0)
+                {
+                    hero.display_flag = 2;
+                    isjump = true;
+                    f_scroll_UP = 1;
+                }
+                else
+                {
+                    f_scroll_UP = -1;
+                }
             }
-            if (rightflag == 1)
+            else
             {
-                hero.display_flag = 0;
-                h.x += 15;
-                hero.walk_frame_index++;
-                if (hero.walk_frame_index > 7) hero.walk_frame_index = 0;
+                f_scroll_UP = -1;
+            }
+
+            if (hero.y < this.ClientSize.Height - 190)
+            {
+                if (downflag == 1)
+                {
+                    h.y += 10;
+                    f_scroll_DOWN = 1;
+                }
+                else
+                {
+                    f_scroll_DOWN = -1;
+                }
+            }
+            else
+            {
+                f_scroll_DOWN = -1;
+            }
+
+            if (hero.x > door_le1[0].x)
+            {
+                if (leftflag == 1)
+                {
+                    f_scroll_L = 1;
+                    hero.display_flag = 0;
+                    h.x -= 10;
+                    hero.walk_frame_index--;
+                    if (hero.walk_frame_index < 0) hero.walk_frame_index = 7;
+                }
+                else
+                {
+                    f_scroll_L = -1;
+                }
+            }
+            else
+            {
+                f_scroll_L = -1;
+            }
+            if (hero.x < stair_le1[0].x+150)
+            {
+                if (rightflag == 1)
+                {
+                    f_scroll_R = 1;
+                    hero.display_flag = 0;
+                    h.x += 10;
+                    hero.walk_frame_index++;
+                    if (hero.walk_frame_index > 7) hero.walk_frame_index = 0;
+                }
+            }
+            else
+            {
+                f_scroll_R = -1;
             }
             // shot
            
         }
         void jump()
         {
-            if (isjump )
+            if (isjump)
             {
                 jump_count++;
                 hero.y -= 20;
-                
+
                 hero.jump_frame_index++;
                 hero.display_flag = 2;
+
                 if (hero.jump_frame_index > 8)
                 {
                     hero.jump_frame_index = 0;
                     hero.display_flag = 0;
                     isjump = false;
                     return;
-
                 }
             }
-            else if(jump_count>0)
+            else if (jump_count > 0)
             {
-                hero.y += 20;
-                jump_count--;
-            }
+                int groundY = get_ground_y();
 
+                if (hero.y < groundY)
+                {
+                    hero.y += 20;
+                    jump_count--;
+                    if (hero.y > groundY) hero.y = groundY; // للتأكد إنه يقف عليه تمامًا
+                }
+                else
+                {
+                    jump_count = 0;
+                }
+            }
         }
+
         void shot()
         {
             if (f_flag == 1)
@@ -448,7 +1155,6 @@ namespace long_game_project
                 case Keys.A:
                     leftflag = 1;
                     hero.is_move_right = false;
-
                     break;
                 case Keys.S:
                     downflag = 1;
@@ -456,6 +1162,7 @@ namespace long_game_project
                 case Keys.D:
                    hero.is_move_right = true;
                     rightflag = 1;
+
                     break;
                 case Keys.Space:
                     spaceflag = 1;
@@ -624,58 +1331,63 @@ namespace long_game_project
 
         void wolf_display(Graphics g2)
         {
-            Bitmap wolf_current_image;
 
-            if (wolf.is_dead)
+            if (hero.x > 700)
             {
-                if (wolf.dead_frame_index >= wolf.dead.Count)
+                Bitmap wolf_current_image;
+
+                if (wolf.is_dead)
                 {
-                    wolf.dead_frame_index = wolf.dead.Count - 1;
+                    if (wolf.dead_frame_index >= wolf.dead.Count)
+                    {
+                        wolf.dead_frame_index = wolf.dead.Count - 1;
+                    }
+                    wolf_current_image = wolf.dead[wolf.dead_frame_index];
+                    if (wolf.dead_frame_index < wolf.dead.Count - 1)
+                    {
+                        wolf.dead_frame_index++;
+                    }
                 }
-                wolf_current_image = wolf.dead[wolf.dead_frame_index];
-                if (wolf.dead_frame_index < wolf.dead.Count - 1)
+                else if (wolf.is_attacking)
                 {
-                    wolf.dead_frame_index++;
+                    if (wolf.is_move_right)
+                    {
+                        wolf_current_image = wolf.attack_right[wolf.attack_frame_index];
+                    }
+                    else
+                    {
+                        wolf_current_image = wolf.attack_left[wolf.attack_frame_index];
+                    }
                 }
-            }
-            else if (wolf.is_attacking)
-            {
-                if (wolf.is_move_right)
+                else if (wolf.is_in_cooldown || Math.Abs(hero.x - wolf.x) > wolf.DETECTION_RANGE)
                 {
-                    wolf_current_image = wolf.attack_right[wolf.attack_frame_index];
+                    // Show idle animation when in cooldown or out of detection range
+                    wolf_current_image = wolf.idle[wolf.wf];
+                    wolf.wf++;
+                    if (wolf.wf >= wolf.idle.Count)
+                    {
+                        wolf.wf = 0;
+                    }
                 }
                 else
                 {
-                    wolf_current_image = wolf.attack_left[wolf.attack_frame_index];
+                    if (wolf.is_move_right)
+                    {
+                        wolf_current_image = wolf.run_right[wolf.wf];
+                    }
+                    else
+                    {
+                        wolf_current_image = wolf.run_left[wolf.wf];
+                    }
                 }
-            }
-            else if (wolf.is_in_cooldown || Math.Abs(hero.x - wolf.x) > wolf.DETECTION_RANGE)
-            {
-                // Show idle animation when in cooldown or out of detection range
-                wolf_current_image = wolf.idle[wolf.wf];
-                wolf.wf++;
-                if (wolf.wf >= wolf.idle.Count)
-                {
-                    wolf.wf = 0;
-                }
-            }
-            else
-            {
-                if (wolf.is_move_right)
-                {
-                    wolf_current_image = wolf.run_right[wolf.wf];
-                }
-                else
-                {
-                    wolf_current_image = wolf.run_left[wolf.wf];
-                }
-            }
 
-            g2.DrawImage(wolf_current_image, wolf.x, wolf.y);
+                g2.DrawImage(wolf_current_image, wolf.x, wolf.y);
+            }
         }
 
         void move_dragon()
         {
+
             if (dragon.is_dead) return;
 
             // Handle flame animation
@@ -697,7 +1409,7 @@ namespace long_game_project
                 {
                     dragon.wf = 0;
                     dragon.fly_count++;  // Increment fly count
-                    
+
                     // After completing two fly animation cycles, start flame animation
                     if (dragon.fly_count >= 5)
                     {
@@ -706,11 +1418,10 @@ namespace long_game_project
                     }
                 }
             }
-
             // Move dragon (now moves even while attacking)
             dragon.x += dragon.dir;
 
-            if (dragon.x < 0)
+            if (dragon.x < 300)
             {
                 dragon.is_move_right = true;
                 dragon.dir = 10;
@@ -725,40 +1436,52 @@ namespace long_game_project
 
         void dragon_display(Graphics g2)
         {
-            Bitmap dragon_current_image;
 
-            if (dragon.is_dead)
+            if (hero.x <400 || (hero.y<500 && hero.x < 600))
             {
-                // Handle death animation if you have one
-                return;
-            }
-            else if (dragon.is_attacking)
-            {
-                if (dragon.is_move_right)
+                Bitmap dragon_current_image;
+
+                if (dragon.is_dead)
                 {
-                    dragon_current_image = dragon.attack_right[dragon.attack_frame_index];
+                    // Handle death animation if you have one
+                    return;
+                }
+                else if (dragon.is_attacking)
+                {
+                    if (dragon.is_move_right)
+                    {
+                        dragon_current_image = dragon.attack_right[dragon.attack_frame_index];
+                    }
+                    else
+                    {
+                        dragon_current_image = dragon.attack_left[dragon.attack_frame_index];
+                    }
                 }
                 else
                 {
-                    dragon_current_image = dragon.attack_left[dragon.attack_frame_index];
+                    if (dragon.is_move_right)
+                    {
+                        dragon_current_image = dragon.run_right[dragon.wf];
+                    }
+                    else
+                    {
+                        dragon_current_image = dragon.run_left[dragon.wf];
+                    }
                 }
-            }
-            else
-            {
-                if (dragon.is_move_right)
-                {
-                    dragon_current_image = dragon.run_right[dragon.wf];
-                }
-                else
-                {
-                    dragon_current_image = dragon.run_left[dragon.wf];
-                }
-            }
 
-            g2.DrawImage(dragon_current_image, dragon.x, dragon.y);
+                g2.DrawImage(dragon_current_image, dragon.x, dragon.y);
+            }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            creat_Background_le1();
+            creat_lava_le1();
+            creat_block_le1();
+            creat_dertion_le1();
+            creat_door_le1();
+            creat_stair_le1();
+            creat_trav_le1();
             // walk 
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 
@@ -769,12 +1492,16 @@ namespace long_game_project
                 hero.walk_r_imges.Add(temp);
                 temp = new Bitmap("walk_left/" + i + ".png");
 
+                hero.H = temp.Height;
+
+                hero.W = temp.Width;
 
                 hero.walk_l_imges.Add(temp);
 
             }
-            hero.x = this.ClientSize.Width - hero.walk_r_imges[0].Width;
-            hero.y = 445;
+            hero.x = 0; //this.ClientSize.Width - hero.walk_r_imges[0].Width;
+            hero.y = this.ClientSize.Height- 50;
+
             // shot
             for (int i = 0; i < 11; i++)
             {
@@ -829,8 +1556,8 @@ namespace long_game_project
                     python.hurt.Add(temp);
                 }
 
-                python.x = 200;
-                python.y = 445;
+                python.x = A;
+                python.y = this.ClientSize.Height - 560;
             }
 
             // Load wolf images
@@ -861,8 +1588,8 @@ namespace long_game_project
             }
 
             //  wolf position
-            wolf.x = 300;
-            wolf.y = 445;
+            wolf.x = 1500;
+            wolf.y = this.ClientSize.Height - 190;
             wolf.is_move_right = true;
 
             // Load dragon images
@@ -879,21 +1606,57 @@ namespace long_game_project
             }
 
             // Set dragon initial position
-            dragon.x = 400;
-            dragon.y = 200;
+            dragon.x = 300;
+            dragon.y = 100;
             dragon.is_move_right = true;
             dragon.dir = 10;
         }
-            void drawscene(Graphics g2)
+        void drawscene(Graphics g2)
         {
             g2.Clear(Color.White);
+            for (int i = 0; i < Background_le1.Count; i++)
+            {
+                g2.DrawImage(Background_le1[i].img, Background_le1[i].recdst, Background_le1[i].recsrc, GraphicsUnit.Pixel);
+            }
 
+            for (int i = 0; i < block_le1.Count; i++)
+            {
+                g2.DrawImage(block_le1[i].img, block_le1[i].x, block_le1[i].y);
+            }
+            for (int i = 0; i < block_down_le1.Count; i++)
+            {
+                g2.DrawImage(block_down_le1[i].img, block_down_le1[i].x, block_down_le1[i].y);
+            }
+            for (int i = 0; i < door_le1.Count; i++)
+            {
+                g2.DrawImage(door_le1[i].img, door_le1[i].x, door_le1[i].y);
+            }
+            for (int i = 0; i < linedoor_le1.Count; i++)
+            {
+                g2.DrawImage(linedoor_le1[i].img, linedoor_le1[i].x, linedoor_le1[i].y);
+            }
+            for (int i = 0; i < stair_le1.Count; i++)
+            {
+                g2.DrawImage(stair_le1[i].img, stair_le1[i].x, stair_le1[i].y);
+            }
+            for (int i = 0; i < lava_le1.Count; i++)
+            {
+                MUCImgActor pT = lava_le1[i];
+                g2.DrawImage(pT.imgs[pT.iF], pT.x, pT.y);
+            }
+            for (int i = 0; i < trav_le1.Count; i++)
+            {
+                g2.DrawImage(trav_le1[i].img, trav_le1[i].x, trav_le1[i].y);
+            }
             hero_display(g2);
             wolf_display(g2);
             dragon_display(g2);
             arrow_display(g2);
             python_display(g2);
+           
         }
+
+
     }
 
 }

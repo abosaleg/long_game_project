@@ -7,3 +7,21 @@ D:\my problems\multi media\long_game_project\long_game_project\obj\Debug\long_ga
 D:\my problems\multi media\long_game_project\long_game_project\obj\Debug\long_game_project.csproj.CoreCompileInputs.cache
 D:\my problems\multi media\long_game_project\long_game_project\obj\Debug\long_game_project.exe
 D:\my problems\multi media\long_game_project\long_game_project\obj\Debug\long_game_project.pdb
+D:\cs\Multimida\long_game_project-main\long_game_project\bin\Debug\long_game_project.exe.config
+D:\cs\Multimida\long_game_project-main\long_game_project\bin\Debug\long_game_project.exe
+D:\cs\Multimida\long_game_project-main\long_game_project\bin\Debug\long_game_project.pdb
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.AssemblyReference.cache
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.Properties.Resources.resources
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.GenerateResource.cache
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.CoreCompileInputs.cache
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.exe
+D:\cs\Multimida\long_game_project-main\long_game_project\obj\Debug\long_game_project.pdb
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\bin\Debug\long_game_project.exe.config
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\bin\Debug\long_game_project.exe
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\bin\Debug\long_game_project.pdb
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.AssemblyReference.cache
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.Properties.Resources.resources
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.GenerateResource.cache
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.csproj.CoreCompileInputs.cache
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.exe
+C:\Users\O.R.G\Downloads\long_game_project-main\long_game_project-main\long_game_project\obj\Debug\long_game_project.pdb
