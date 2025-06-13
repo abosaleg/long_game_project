@@ -145,7 +145,7 @@ namespace long_game_project
                 cimgactor pnn = new cimgactor();
                 pnn.img = new Bitmap("block/tile1.png");
                 pnn.x = 0 + xx;
-                pnn.y = ClientSize.Height -yy- 70;
+                pnn.y = ClientSize.Height - 70;
                 block_le1.Add(pnn);
                 for (int o = 0; o < 20; o++)
                 {
@@ -262,27 +262,27 @@ namespace long_game_project
                 cimgactor pnn = new cimgactor();
                 pnn.img = new Bitmap("block/tile1.png");
                 pnn.x = 0 + xx;
-                pnn.y = ClientSize.Height - yy - 70-200;
+                pnn.y = ClientSize.Height/2;
                 block_le1.Add(pnn);
                 for (int o = 0; o < 10; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
-                    pnnr1.y = ClientSize.Height - yy - 70 - 200;
+                    pnnr1.y = ClientSize.Height/2 - yy;
                     block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
-                pnn2.y = ClientSize.Height - yy - 70 - 200 ;
+                pnn2.y = ClientSize.Height/2 - yy ;
                 block_le1.Add(pnn2);
 
             }
             //bolkfok
             yy = 0;
-            xx = 300;
+            xx = 400;
             x = 0;
             ///ard
             for (int i = 0; i < 1; i++)
@@ -290,21 +290,21 @@ namespace long_game_project
                 cimgactor pnn = new cimgactor();
                 pnn.img = new Bitmap("block/tile1.png");
                 pnn.x = 0 + xx;
-                pnn.y = ClientSize.Height - yy - 70-300;
+                pnn.y = ClientSize.Height - yy - 70-500;
                 block_le1.Add(pnn);
                 for (int o = 0; o < 10; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
-                    pnnr1.y = ClientSize.Height - yy - 70-300;
+                    pnnr1.y = ClientSize.Height - yy - 70-500;
                     block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
-                pnn2.y = ClientSize.Height - yy - 70-300;
+                pnn2.y = ClientSize.Height - yy - 70-500;
                 block_le1.Add(pnn2);
 
             }
@@ -313,25 +313,23 @@ namespace long_game_project
             {
                 cimgactor pnn = new cimgactor();
                 pnn.img = new Bitmap("block/tile1.png");
-                pnn.x = (0 + xx)+x;
-                pnn.y = 400 - yy;
+                pnn.x = 0 + xx+50;
+                pnn.y = ClientSize.Height - yy - 70 - 500;
                 block_le1.Add(pnn);
-
-                for (int o = 0; o < 13; o++)
+                for (int o = 0; o < 10; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
-                    pnnr1.y = 400 - yy;
+                    pnnr1.y = ClientSize.Height - yy - 70 - 500;
                     block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
-                pnn2.y = 400 - yy;
+                pnn2.y = ClientSize.Height - yy - 70 - 500;
                 block_le1.Add(pnn2);
-
             }
 
             xx += 200;
@@ -339,26 +337,25 @@ namespace long_game_project
             {
                 cimgactor pnn = new cimgactor();
                 pnn.img = new Bitmap("block/tile1.png");
-                pnn.x = (0 + xx) + x;
-                pnn.y = 400 - yy;
-                block_le1.Add(pnn);
+                pnn.x = 0 + xx-50;
                 A = pnn.x;
+                pnn.y = ClientSize.Height - yy - 70 - 500;
+                block_le1.Add(pnn);
                 for (int o = 0; o < 8; o++)
                 {
                     cimgactor pnnr1 = new cimgactor();
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
-                    pnnr1.y = 400 - yy;
+                    pnnr1.y = ClientSize.Height - yy - 70 - 500;
                     block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
-                pnn2.y = 400 - yy;
-                block_le1.Add(pnn2);
                 B = pnn2.x;
-
+                pnn2.y = ClientSize.Height - yy - 70 - 500;
+                block_le1.Add(pnn2);
             }
         }
         void creat_door_le1()
@@ -369,7 +366,7 @@ namespace long_game_project
             cimgactor pnn = new cimgactor();
             pnn.img = new Bitmap("block/tile1.png");
             pnn.x = 0 + xx;
-            pnn.y = 370 - yy;
+            pnn.y = ClientSize.Height - yy - 70 - 400 ;
             block_le1.Add(pnn);
 
             for (int i = 0; i < 2; i++)
@@ -377,14 +374,14 @@ namespace long_game_project
                 cimgactor pnnr1 = new cimgactor();
                 pnnr1.img = new Bitmap("block/tile2.png");
                 pnnr1.x = (50 + x) + xx;
-                pnnr1.y = 370 - yy;
+                pnnr1.y = ClientSize.Height - yy - 70 - 400;
                 block_le1.Add(pnnr1);
                 x += pnnr1.img.Width;
             }
             cimgactor pnn2 = new cimgactor();
             pnn2.img = new Bitmap("block/tile3.png");
             pnn2.x = (50 + x) + xx;
-            pnn2.y = 370 - yy;
+            pnn2.y = ClientSize.Height - yy - 70 - 400;
             block_le1.Add(pnn2);
             yy += 100;
             xx += 200;
@@ -392,20 +389,9 @@ namespace long_game_project
             cimgactor pnndo = new cimgactor();
             pnndo.img = new Bitmap("door/door_le1.png");
             pnndo.x = 0;
-            pnndo.y = 250;
+            pnndo.y = ClientSize.Height - yy - 70 -420;
             door_le1.Add(pnndo);
 
-            //linedoor
-            yy = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                cimgactor pnnr1 = new cimgactor();
-                pnnr1.img = new Bitmap("block/tile6.png");
-                pnnr1.x = 170;
-                pnnr1.y = (-30) + yy;
-                linedoor_le1.Add(pnnr1);
-                yy += 50;
-            }
 
         }
         void creat_trav_le1()
@@ -414,19 +400,19 @@ namespace long_game_project
             cimgactor pnn = new cimgactor();
             pnn.img = new Bitmap("block/tile1.png");
             pnn.x = 2800;
-            pnn.y = 490;
+            pnn.y = ClientSize.Height/2;
             trav_le1.Add(pnn);
 
             cimgactor pnnr1 = new cimgactor();
             pnnr1.img = new Bitmap("block/tile2.png");
             pnnr1.x = 2850;
-            pnnr1.y = 490;
+            pnnr1.y = ClientSize.Height / 2;
             trav_le1.Add(pnnr1);
 
             cimgactor pnn2 = new cimgactor();
             pnn2.img = new Bitmap("block/tile3.png");
             pnn2.x = 2900;
-            pnn2.y = 490;
+            pnn2.y = ClientSize.Height / 2;
             trav_le1.Add(pnn2);
 
         }
@@ -437,15 +423,15 @@ namespace long_game_project
             cimgactor pnn = new cimgactor();
             pnn.img = new Bitmap("stair/stair1.png");
             pnn.x = 3500;
-            pnn.y = 530;
+            pnn.y = ClientSize.Height/2;
             stair_le1.Add(pnn);
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 10; i++)
             {
                 yy += pnn.img.Height;
                 cimgactor pnn1 = new cimgactor();
                 pnn1.img = new Bitmap("stair/stair2.png");
                 pnn1.x = 3500;
-                pnn1.y = 530 + yy;
+                pnn1.y = ClientSize.Height / 2 + yy;
                 stair_le1.Add(pnn1);
             }
         }
@@ -460,7 +446,7 @@ namespace long_game_project
             pnnimg = new Bitmap("lava/lava_tile8.png");
             pnn.imgs.Add(pnnimg);
             pnn.x = 1350;
-            pnn.y = 770;
+            pnn.y = ClientSize.Height  - 70;
             lava_le1.Add(pnn);
             int xx = 0;
             for (int i = 0; i < 18; i++)
@@ -473,7 +459,7 @@ namespace long_game_project
                 pnnimg3 = new Bitmap("lava/lava_tile9.png");
                 pnn3.imgs.Add(pnnimg3);
                 pnn3.x = 1350 + xx;
-                pnn3.y = 770;
+                pnn3.y = ClientSize.Height  - 70;
                 lava_le1.Add(pnn3);
             }
             xx += 50;
@@ -484,7 +470,7 @@ namespace long_game_project
             pnnimg2 = new Bitmap("lava/lava_tile10.png");
             pnn2.imgs.Add(pnnimg2);
             pnn2.x = 1350 + xx;
-            pnn2.y = 770;
+            pnn2.y = ClientSize.Height - 70;
             lava_le1.Add(pnn2);
             //MUCImgActor pnnf = new MUCImgActor();
             //pnn.imgs = new List<Bitmap>();
@@ -507,19 +493,19 @@ namespace long_game_project
             cimgactor pnn = new cimgactor();
             pnn.img = new Bitmap("marker_statue/marker_statue3.png");
             pnn.x = 200;
-            pnn.y = 700;
+            pnn.y = ClientSize.Height - 70-50;
             block_le1.Add(pnn);
 
             pnn = new cimgactor();
             pnn.img = new Bitmap("marker_statue/marker_statue3.png");
             pnn.x = 1250;
-            pnn.y = 700;
+            pnn.y = ClientSize.Height - 70-50 ;
             block_le1.Add(pnn);
 
             pnn = new cimgactor();
             pnn.img = new Bitmap("marker_statue/marker_statue3.png");
             pnn.x = 1900;
-            pnn.y = 500;
+            pnn.y = ClientSize.Height/2;
             block_le1.Add(pnn);
         }
         void scllor()
