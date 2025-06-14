@@ -29,7 +29,8 @@ namespace long_game_project
     class cimghero
     {
         public int x, y, walk_frame_index = 0, shot_frame_index, dead_frame_index = 0, jump_frame_index = 0, idle_frame_index = 0;
-        public bool is_move_right = true;
+        public bool is_move_right = true,
+        is_touched_laser = false;
         public int hero_health = 5, display_flag = 0;
         public List<Bitmap> walk_r_imges = new List<Bitmap>();
         public List<Bitmap> walk_l_imges = new List<Bitmap>();
@@ -457,7 +458,7 @@ namespace long_game_project
             pnn.x = 3500;
             pnn.y = ClientSize.Height / 2;
             stair_le1.Add(pnn);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 9; i++)
             {
                 yy += pnn.img.Height;
                 cimgactor pnn1 = new cimgactor();
@@ -717,39 +718,114 @@ namespace long_game_project
                 }
             }
         }
-        int get_ground_y()
+        int gravity_function()
         {
-            int groundY = ClientSize.Height-hero.H;
+            int groundY = ClientSize.Height - hero.H;
 
-            foreach (var block in block_up_of_lava.Concat(block_le1).Concat(wolf_block_le1).Concat(trav_le1))
+            // block_up_of_lava
+            foreach (var block in block_up_of_lava)
             {
-                bool Y_check = false;
-                bool X_check = false;
                 if (block.y >= hero.y + hero.H)
                 {
                     if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
                     {
-                        Y_check = true;
-                        X_check = true;
-                    }
-                    else
-                    {
-                        X_check = false;
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
                     }
                 }
-                else
+            }
+
+            // block_le1
+            foreach (var block in block_le1)
+            {
+                if (block.y >= hero.y + hero.H)
                 {
-                    Y_check = false;
-                }
-
-
-                if (Y_check && X_check)
-                {
-                    int Y_New_hero = block.y - hero.H;
-
-                    if (Y_New_hero < groundY)
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
                     {
-                        groundY = Y_New_hero;
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
+                    }
+                }
+            }
+
+            // wolf_block_le1
+            foreach (var block in wolf_block_le1)
+            {
+                if (block.y >= hero.y + hero.H)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
+                    }
+                }
+            }
+
+            //  trav_le1
+            foreach (var block in trav_le1)
+            {
+                if (block.y >= hero.y + hero.H)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
+                    }
+                }
+            }
+            
+            foreach (var block in python_block_le1)
+            {
+                if (block.y >= hero.y + hero.H)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
+                    }
+                }
+            }
+            
+            foreach (var block in laser_enemy_block_le1)
+            {
+                if (block.y >= hero.y + hero.H)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
+                    }
+                }
+            }
+            foreach (var block in dragon_block_le1)
+            {
+                if (block.y >= hero.y + hero.H)
+                {
+                    if (hero.x + hero.W > block.x && hero.x < block.x + block.img.Width)
+                    {
+                        int newGround = block.y - hero.H;
+                        if (newGround < groundY)
+                        {
+                            groundY = newGround;
+                        }
                     }
                 }
             }
@@ -838,6 +914,17 @@ namespace long_game_project
                             hero.y = stair_le1[0].y - hero.H;
                         }
                     }
+                    else if (stair_flag == 2)
+                    {
+                        hero.y += 5;
+
+
+                        if (hero.y > stair_le1[stair_le1.Count - 2].y - hero.H)
+                        {
+                            hero.y = wolf_block_le1[0].y - hero.H;
+                        }
+                    }
+                
                 }
                 else
                     gravity = true;
@@ -855,44 +942,9 @@ namespace long_game_project
             stair();
             // Update falling blocks
 
-            for (int i = 0; i < lava_le1.Count; i++)
-            {
-                if (lava_le1[i].iF < 1)
-                {
-                    lava_le1[i].iF++;
-                }
-                else
-                {
-                    lava_le1[i].iF = 0;
-                }
-            }
+           
 
-            for (int i = 0; i < trav_le1.Count; i++)
-            {
-                if (trav_le1[i].dy == -1)
-                {
-                    if (trav_le1[i].y >= 260)
-                    {
-                        trav_le1[i].y -= 5;
-
-                    }
-                    else
-                    {
-                        trav_le1[i].dy = 1;
-                    }
-                }
-                if (trav_le1[i].dy == 1)
-                {
-                    if (trav_le1[i].y <= 510)
-                    {
-                        trav_le1[i].y += 5;
-                    }
-                    else
-                    {
-                        trav_le1[i].dy = -1;
-                    }
-                }
-            }
+          
 
             if (python_block_le1[0].x >= 700 && python_block_le1[0].x <= 720)
             {
@@ -913,10 +965,11 @@ namespace long_game_project
             {
                 F_wolf = -1;
             }
+
             if (gravity)
             {
 
-                int groundY = get_ground_y();
+                int groundY = gravity_function();
 
                 if (hero.y < groundY - 10)
                 {
@@ -927,16 +980,13 @@ namespace long_game_project
                     hero.y = groundY;
                 }
             }
-            if (f_laser_yz==1&&py_laser2 <= ClientSize.Height-70)
-            {
-                py_laser2 += 15;
-            }
-            if (ct_tick%5==0&& py_laser2 >= ClientSize.Height - 70)
-            {
-                f_laser_yz = -1;
-                py_laser2 = 600;
-            }
 
+
+
+            hit_leser();
+            laser();
+            trav();
+            frem_lava();
             shot();
             jump();
             if_idle();
@@ -953,8 +1003,8 @@ namespace long_game_project
             //check_hero_health_if_touch(wolf);
             check_hero_health_if_touch(python);
             check_hero_health_if_touch(dragon);
-            this.Text = hero.hero_health.ToString();
-            //this.Text = hero.x.ToString();
+            //this.Text = hero.hero_health.ToString();
+            this.Text = hero.x.ToString();
             scllor();
             drawdb();
             ct_tick++;
@@ -994,8 +1044,107 @@ namespace long_game_project
                 enemy.is_touched_hero = false;
             }
         }
+        void laser()
+        {
+            if (f_laser_yz == 1 && py_laser2 <= ClientSize.Height - 70)
+            {
+                py_laser2 += 15;
+            }
+            //what zhwr
+            if (ct_tick % 20 == 0 && py_laser2 >= ClientSize.Height - 70)
+            {
+                f_laser_yz = -1;
+                py_laser2 = 500;
+            }
+            //what ela5tfa
+            if (ct_tick % 30 == 0 && py_laser2 == 500)
+            {
+                f_laser_yz = 1;
+            }
+        }
+        void hit_leser()
+        {
+            int laser_x = laser_block_le1[0].x;
+            int laser_y = laser_block_le1[0].y;
+            int laser_w = laser_block_le1[0].img.Width;
+            int laser_h = laser_block_le1[0].img.Height;
 
+            bool x_overlap = (hero.x + hero.W > laser_x) && (hero.x < laser_x + laser_w);
+            bool y_overlap = (hero.y + hero.H > laser_y) && (hero.y < laser_y + laser_h);
 
+            if (x_overlap && y_overlap)
+            {
+                if (!hero.is_touched_laser)
+                {
+                    hero.hero_health--;
+                    hero.is_touched_laser = true;
+                }
+            }
+            else
+            {
+                hero.is_touched_laser = false;
+            }
+        }
+
+        void trav()
+        {
+            int trav_speed = 5;
+
+            for (int i = 0; i < trav_le1.Count; i++)
+            {
+                cimgactor trav = trav_le1[i];
+
+                if (trav.dy == -1)
+                {
+                    if (trav.y >= ClientSize.Height / 2 - 150)
+                    {
+                        if (hero.x + hero.W > trav.x && hero.x < trav.x + trav.img.Width &&
+                            hero.y + hero.H == trav.y)
+                        {
+                            hero.y -= trav_speed;
+                        }
+
+                        trav.y -= trav_speed;
+                    }
+                    else
+                    {
+                        trav.dy = 1;
+                    }
+                }
+
+                if (trav.dy == 1)
+                {
+                    if (trav.y <= ClientSize.Height / 2)
+                    {
+                        if (hero.x + hero.W > trav.x && hero.x < trav.x + trav.img.Width &&
+                            hero.y + hero.H == trav.y)
+                        {
+                            hero.y += trav_speed;
+                        }
+
+                        trav.y += trav_speed;
+                    }
+                    else
+                    {
+                        trav.dy = -1;
+                    }
+                }
+            }
+        }
+        void frem_lava()
+        {
+            for (int i = 0; i < lava_le1.Count; i++)
+            {
+                if (lava_le1[i].iF < 1)
+                {
+                    lava_le1[i].iF++;
+                }
+                else
+                {
+                    lava_le1[i].iF = 0;
+                }
+            }
+        }
         void move_python()
         {
             if (python.is_dead) return;
@@ -1068,7 +1217,7 @@ namespace long_game_project
                     g2.DrawImage(hero.dead_imges[hero.dead_frame_index], hero.x, hero.y);
 
                     // Add delay between frames
-                    if (hero.death_animation_delay < 5)  // Adjust this number to change delay length
+                    if (hero.death_animation_delay < 2)  // Adjust this number to change delay length
                     {
                         hero.death_animation_delay++;
                     }
@@ -1251,7 +1400,7 @@ namespace long_game_project
             }
             else if (jump_count > 0)
             {
-                int groundY = get_ground_y();
+                int groundY = gravity_function();
 
                 if (hero.y < groundY)
                 {
@@ -1265,7 +1414,6 @@ namespace long_game_project
                 }
             }
         }
-
         void shot()
         {
             if (f_flag == 1)
@@ -1336,6 +1484,7 @@ namespace long_game_project
                     break;
                 case Keys.S:
                     downflag = 0;
+                    stair_flag = 0;
                     break;
                 case Keys.D:
                     rightflag = 0;
@@ -1367,6 +1516,7 @@ namespace long_game_project
                     break;
                 case Keys.S:
                     downflag = 1;
+                    stair_flag = 2;
                     break;
                 case Keys.D:
                     hero.is_move_right = true;
