@@ -34,3 +34,12 @@ D:\cs\Multimida\long_game_project\long_game_project\obj\Debug\long_game_project.
 D:\cs\Multimida\long_game_project\long_game_project\obj\Debug\long_game_project.csproj.CoreCompileInputs.cache
 D:\cs\Multimida\long_game_project\long_game_project\obj\Debug\long_game_project.exe
 D:\cs\Multimida\long_game_project\long_game_project\obj\Debug\long_game_project.pdb
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.csproj.AssemblyReference.cache
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.Properties.Resources.resources
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.csproj.GenerateResource.cache
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.csproj.CoreCompileInputs.cache
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.exe
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\obj\Debug\long_game_project.pdb
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\bin\Debug\long_game_project.exe.config
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\bin\Debug\long_game_project.exe
+C:\Users\O.R.G\Downloads\temp\long_game_project\long_game_project\bin\Debug\long_game_project.pdb
