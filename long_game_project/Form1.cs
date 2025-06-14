@@ -99,8 +99,11 @@ namespace long_game_project
     {
         cimghero hero = new cimghero();
         Bitmap off;
-        int rightflag = 0, leftflag = 0, upflag = 0, downflag = 0, spaceflag = 0,
-            f_flag = 0, f_scroll_R = -1, f_scroll_L = -1, f_scroll_UP = -1, f_scroll_DOWN = -1, A, B, F_hit_blok = -1, F_lo = 0, F_g, F_wolf=-1;
+        int ct_tick, rightflag = 0, leftflag = 0, upflag = 0, downflag = 0, spaceflag = 0,
+            f_flag = 0, f_scroll_R = -1, f_scroll_L = -1, f_scroll_UP = -1, f_scroll_DOWN = -1, A, B, F_hit_blok = -1, F_lo = 0, F_g
+            , F_wolf = -1, f_laser_yz=1, py_laser2=600;
+        int stair_flag = 0;
+        bool gravity = true;
 
 
         bool isjump = false;
@@ -129,6 +132,7 @@ namespace long_game_project
         List<cimgactor> dragon_block_le1 = new List<cimgactor>();
         List<cimgactor> wolf_block_le1 = new List<cimgactor>();
         List<cimgactor> laser_enemy_block_le1 = new List<cimgactor>();
+        List<cimgactor> laser_block_le1 = new List<cimgactor>();
         cenemyactor laser_enemy = new cenemyactor();
         cadvancedimgactor laser_line;
 
@@ -145,7 +149,6 @@ namespace long_game_project
             MouseDown += Form1_MouseDown;
         }
         ///
-
         void creat_Background_le1()
         {
             cadvancedimgactor pnn = new cadvancedimgactor();
@@ -533,6 +536,27 @@ namespace long_game_project
             pnn.y = ClientSize.Height /2 -75;
             chick_point.Add(pnn);
         }
+        void laser_blo_le1()
+        {
+            cimgactor pnnr1 = new cimgactor();
+            pnnr1.img = new Bitmap("lasir/00_lasir.png");
+            pnnr1.x = 500 ;
+            pnnr1.y = ClientSize.Height  - 70 - 280;
+            laser_block_le1.Add(pnnr1);
+
+            pnnr1 = new cimgactor();
+            pnnr1.img = new Bitmap("lasir/00_lasir.png");
+            pnnr1.x = 700;
+            pnnr1.y = ClientSize.Height - 70 - 280;
+            laser_block_le1.Add(pnnr1);
+
+            pnnr1 = new cimgactor();
+            pnnr1.img = new Bitmap("lasir/00_lasir.png");
+            pnnr1.x = 900;
+            pnnr1.y = ClientSize.Height - 70 - 280;
+            laser_block_le1.Add(pnnr1);
+
+        }
         void scllor()
         {
             if (hero.is_dead) return;
@@ -591,7 +615,12 @@ namespace long_game_project
                     {
                         chick_point[i].x += 20;
                     }
-                    
+
+                    for (int i = 0; i < laser_block_le1.Count; i++)
+                    {
+                        laser_block_le1[i].x += 20;
+                    }
+
                     // Only move wolf if it's within visible area
                     if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
                     {
@@ -653,6 +682,10 @@ namespace long_game_project
                         chick_point[i].x -= 20;
                     }
 
+                    for (int i = 0; i < laser_block_le1.Count; i++)
+                    {
+                        laser_block_le1[i].x -= 20;
+                    }
                     for (int i = 0; i < wolf_block_le1.Count; i++)
                     {
                         wolf_block_le1[i].x -= 20;
@@ -688,7 +721,7 @@ namespace long_game_project
         {
             int groundY = ClientSize.Height-hero.H;
 
-            foreach (var block in block_up_of_lava.Concat(block_le1).Concat(wolf_block_le1))
+            foreach (var block in block_up_of_lava.Concat(block_le1).Concat(wolf_block_le1).Concat(trav_le1))
             {
                 bool Y_check = false;
                 bool X_check = false;
@@ -710,9 +743,6 @@ namespace long_game_project
                 }
 
 
-
-
-
                 if (Y_check && X_check)
                 {
                     int Y_New_hero = block.y - hero.H;
@@ -723,7 +753,6 @@ namespace long_game_project
                     }
                 }
             }
-
             return groundY;
         }
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -791,15 +820,30 @@ namespace long_game_project
         }
         void stair()
         {
-            if (hero.x + hero.W <= stair_le1[0].x+ stair_le1[0].img.Width
-                && hero.x + hero.W >= stair_le1[0].x )
+            bool is_on_stair = false;
+
+            foreach (var s in stair_le1)
             {
-                if (hero.y + hero.H <= stair_le1[10].y+5
-               && hero.y >= stair_le1[0].y)
+                if (hero.x + hero.W > s.x && hero.x < s.x + s.img.Width)
                 {
-                    hero.y += 5;
+                    gravity = false;
+
+                    if (stair_flag == 1)
+                    {
+                        hero.y -= 5;
+
+
+                        if (hero.y < stair_le1[0].y - hero.H)
+                        {
+                            hero.y = stair_le1[0].y - hero.H;
+                        }
+                    }
                 }
+                else
+                    gravity = true;
             }
+
+
         }
         private void Tt_Tick(object sender, EventArgs e)
         {
@@ -830,6 +874,7 @@ namespace long_game_project
                     if (trav_le1[i].y >= 260)
                     {
                         trav_le1[i].y -= 5;
+
                     }
                     else
                     {
@@ -868,16 +913,28 @@ namespace long_game_project
             {
                 F_wolf = -1;
             }
-            
-            int groundY = get_ground_y();
+            if (gravity)
+            {
 
-            if (hero.y < groundY - 10)
-            {
-                hero.y += 10;
+                int groundY = get_ground_y();
+
+                if (hero.y < groundY - 10)
+                {
+                    hero.y += 10;
+                }
+                else
+                {
+                    hero.y = groundY;
+                }
             }
-            else
+            if (f_laser_yz==1&&py_laser2 <= ClientSize.Height-70)
             {
-                hero.y = groundY;
+                py_laser2 += 15;
+            }
+            if (ct_tick%5==0&& py_laser2 >= ClientSize.Height - 70)
+            {
+                f_laser_yz = -1;
+                py_laser2 = 600;
             }
 
             shot();
@@ -900,6 +957,7 @@ namespace long_game_project
             //this.Text = hero.x.ToString();
             scllor();
             drawdb();
+            ct_tick++;
         }
         void check_hero_health_if_touch(cenemyactor enemy)
         {
@@ -1289,6 +1347,9 @@ namespace long_game_project
                 case Keys.F:
                     f_flag = 0;
                     break;
+                case Keys.U:
+                    stair_flag = 0;
+                    break;
             }
         }
 
@@ -1317,6 +1378,9 @@ namespace long_game_project
                     break;
                 case Keys.F:
                     f_flag = 1;
+                    break;
+                case Keys.U:
+                    stair_flag = 1;
                     break;
 
             }
@@ -1661,6 +1725,7 @@ namespace long_game_project
             creat_door_le1();
             creat_stair_le1();
             creat_trav_le1();
+            laser_blo_le1();
             // walk 
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 
@@ -1884,7 +1949,15 @@ namespace long_game_project
             {
                 g2.DrawImage(laser_enemy_block_le1[i].img, laser_enemy_block_le1[i].x, laser_enemy_block_le1[i].y);
             }
-            
+
+            for (int i = 0; i < laser_block_le1.Count; i++)
+            {
+                Pen p = new Pen(Color.Red);
+
+                g2.DrawLine(p, laser_block_le1[i].x+25, laser_block_le1[i].y+20, laser_block_le1[i].x+25, py_laser2);
+
+                g2.DrawImage(laser_block_le1[i].img, laser_block_le1[i].x, laser_block_le1[i].y);
+            }
             hero_display(g2);
             wolf_display(g2);
             dragon_display(g2);
@@ -1908,6 +1981,7 @@ namespace long_game_project
             {
                 g2.DrawImage(chick_point[i].img, chick_point[i].x, chick_point[i].y);
             }
+
         }
 
         void move_laser_enemies()
