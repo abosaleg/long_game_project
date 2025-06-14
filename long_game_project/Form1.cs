@@ -31,6 +31,7 @@ namespace long_game_project
         public int x, y, walk_frame_index = 0, shot_frame_index, dead_frame_index = 0, jump_frame_index = 0, idle_frame_index = 0;
         public bool is_move_right = true;
         public int hero_health = 5, display_flag = 0;
+        public int hero_health = 5, display_flag = 0;
         public List<Bitmap> walk_r_imges = new List<Bitmap>();
         public List<Bitmap> walk_l_imges = new List<Bitmap>();
         public List<Bitmap> shot_r_imges = new List<Bitmap>();
@@ -679,8 +680,6 @@ namespace long_game_project
                     {
                         python.x -= 20;
                     }
-                    
-                    laser_line.recdst.X -= 20;
                 }
             }
         }
