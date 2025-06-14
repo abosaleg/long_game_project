@@ -525,7 +525,8 @@ namespace long_game_project
     }
     void scllor()
     {
-      if (leftflag == 1)
+            if (hero.is_dead) return;
+            if (leftflag == 1)
       {
         if (f_scroll_L == 1)
         {
@@ -745,8 +746,6 @@ namespace long_game_project
 
       return groundY;
     }
-
-    ///
     private void Form1_MouseDown(object sender, MouseEventArgs e)
     {
       this.Text = (e.X + "," + e.Y).ToString();
@@ -778,18 +777,45 @@ void make_block_fall()
                 }
             }
         }
+        void check_hero_touching_lava()
+        {
+            foreach (var lava in lava_le1)
+            {
+                if (hero.x + hero.W > lava.x &&
+                    hero.x < lava.x + lava.imgs[0].Width &&
+                    hero.y + hero.H > lava.y &&
+                    hero.y < lava.y + lava.imgs[0].Height)
+                {
+                    hero.hero_health = 0;
+                    if (!hero.is_dead)
+                    {
+                        hero.is_dead = true;
+                        hero.display_flag = 3;  // Set to death animation
+                        hero.dead_frame_index = 0;
+                    }
+                    break;
+                }
+            }
+        }
+        void game_over_animation()
+        {
+            if (hero.show_game_over)
+            {
+                hero.game_over_frame_index++;
+                if (hero.game_over_frame_index >= hero.game_over_frames.Count)
+                {
+                    hero.game_over_frame_index = 0;  // Loop the animation
+                }
+
+            }
+        }
     private void Tt_Tick(object sender, EventArgs e)
     {
-      // Update game over animation
-      if (hero.show_game_over)
-      {
-        hero.game_over_frame_index++;
-        if (hero.game_over_frame_index >= hero.game_over_frames.Count)
-        {
-          hero.game_over_frame_index = 0;  // Loop the animation
-        }
-               
-      }
+            // Check for lava collision
+
+            check_hero_touching_lava();
+            // Update game over animation
+            game_over_animation();
 
       // Update falling blocks
 
