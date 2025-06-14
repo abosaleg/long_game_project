@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,12 +19,18 @@ namespace long_game_project
 
 
     }
+    class advanced_img_actor
+    {
+        public Bitmap img;
+        public Rectangle src;
+        public Rectangle dst;
 
+    }
     class cimghero
     {
         public int x, y, walk_frame_index = 0, shot_frame_index, dead_frame_index = 0, jump_frame_index = 0, idle_frame_index = 0;
         public bool is_move_right = true;
-        public int hero_health = 1, display_flag = 0;
+        public int hero_health = 5, display_flag = 0;
         public List<Bitmap> walk_r_imges = new List<Bitmap>();
         public List<Bitmap> walk_l_imges = new List<Bitmap>();
         public List<Bitmap> shot_r_imges = new List<Bitmap>();
@@ -45,7 +52,7 @@ namespace long_game_project
     }
     class cimgactor// used in arrows 
     {
-        public int x, y, oldx, xd = -1, dy = -1;
+        public int x, y, old_y, xd = -1, dy = -1;
         public Bitmap img;
         public bool is_moving_right;
         public bool is_falling = false;
@@ -66,7 +73,7 @@ namespace long_game_project
         public int attack_frame_index = 0;
         public bool is_attacking = false;
         public int attack_cooldown = 0;
-        public int ATTACK_RANGE = 100;
+        public int ATTACK_RANGE = 50;
         public int DETECTION_RANGE = 600;
         public bool is_in_cooldown = false;
         public int health = 5;
@@ -111,6 +118,7 @@ namespace long_game_project
         List<cadvancedimgactor> Background_le1 = new List<cadvancedimgactor>();
         List<MUCImgActor> lava_le1 = new List<MUCImgActor>();
         List<cimgactor> block_le1 = new List<cimgactor>();
+        List<cimgactor> chick_point = new List<cimgactor>();
         List<cimgactor> block_up_of_lava = new List<cimgactor>();
         List<cimgactor> door_le1 = new List<cimgactor>();
         List<cimgactor> linedoor_le1 = new List<cimgactor>();
@@ -120,7 +128,9 @@ namespace long_game_project
         List<cimgactor> python_block_le1 = new List<cimgactor>();
         List<cimgactor> dragon_block_le1 = new List<cimgactor>();
         List<cimgactor> wolf_block_le1 = new List<cimgactor>();
+        List<cimgactor> laser_enemy_block_le1 = new List<cimgactor>();
         cenemyactor laser_enemy = new cenemyactor();
+        cadvancedimgactor laser_line;
 
         public Form1()
         {
@@ -338,14 +348,14 @@ namespace long_game_project
                     pnnr1.img = new Bitmap("block/tile2.png");
                     pnnr1.x = (50 + x) + xx;
                     pnnr1.y = ClientSize.Height - yy - 70 - 500;
-                    block_le1.Add(pnnr1);
+                    laser_enemy_block_le1.Add(pnnr1);
                     x += pnnr1.img.Width;
                 }
                 cimgactor pnn2 = new cimgactor();
                 pnn2.img = new Bitmap("block/tile3.png");
                 pnn2.x = (50 + x) + xx;
                 pnn2.y = ClientSize.Height - yy - 70 - 500;
-                block_le1.Add(pnn2);
+                laser_enemy_block_le1.Add(pnn2);
             }
             /////////////////////////////////////
             xx += 200;
@@ -371,6 +381,10 @@ namespace long_game_project
                 pnn2.y = ClientSize.Height - yy - 70 - 500;
                 python_block_le1.Add(pnn2);
 
+            }
+            foreach (var item in block_up_of_lava)
+            {
+                item.old_y = item.y;
             }
         }
         void creat_door_le1()
@@ -499,29 +513,25 @@ namespace long_game_project
             //}
             //lava.Add(pnnf);
         }
-        void creat_dertion_le1()
+        void creat_chick_point_le1()
         {
             int yy = 0;
             int xx = 0;
             int x = 0;
 
+
             cimgactor pnn = new cimgactor();
             pnn.img = new Bitmap("marker_statue/marker_statue3.png");
-            pnn.x = 200;
-            pnn.y = ClientSize.Height - 70 - 50;
-            block_le1.Add(pnn);
-
-            pnn = new cimgactor();
-            pnn.img = new Bitmap("marker_statue/marker_statue3.png");
             pnn.x = 1250;
-            pnn.y = ClientSize.Height - 70 - 50;
-            block_le1.Add(pnn);
+            pnn.y = ClientSize.Height - 70 - 70;
+            chick_point.Add(pnn);
 
-            pnn = new cimgactor();
+
+             pnn = new cimgactor();
             pnn.img = new Bitmap("marker_statue/marker_statue3.png");
-            pnn.x = 1900;
-            pnn.y = ClientSize.Height / 2;
-            //block_le1.Add(pnn);
+            pnn.x = 3050;
+            pnn.y = ClientSize.Height /2 -75;
+            chick_point.Add(pnn);
         }
         void scllor()
         {
@@ -573,6 +583,15 @@ namespace long_game_project
                     {
                         dragon_block_le1[i].x += 20;
                     }
+                    for (int i = 0; i < laser_enemy_block_le1.Count; i++)
+                    {
+                        laser_enemy_block_le1[i].x += 20;
+                    }
+                    for (int i = 0; i < chick_point.Count; i++)
+                    {
+                        chick_point[i].x += 20;
+                    }
+                    
                     // Only move wolf if it's within visible area
                     if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
                     {
@@ -588,6 +607,7 @@ namespace long_game_project
                         python.x += 20;
                     }
                     laser_enemy.x += 20;
+                    laser_line.recdst.X += 20;
 
                 }
             }
@@ -628,7 +648,10 @@ namespace long_game_project
                     {
                         python_block_le1[i].x -= 20;
                     }
-
+                    for (int i = 0; i < chick_point.Count; i++)
+                    {
+                        chick_point[i].x -= 20;
+                    }
 
                     for (int i = 0; i < wolf_block_le1.Count; i++)
                     {
@@ -637,6 +660,10 @@ namespace long_game_project
                     for (int i = 0; i < dragon_block_le1.Count; i++)
                     {
                         dragon_block_le1[i].x -= 20;
+                    }
+                    for (int i = 0; i < laser_enemy_block_le1.Count; i++)
+                    {
+                        laser_enemy_block_le1[i].x -= 20;
                     }
                     // Only move wolf if it's within visible area
                     if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
@@ -652,45 +679,8 @@ namespace long_game_project
                     {
                         python.x -= 20;
                     }
-                }
-            }
-            if (downflag == 1)
-            {
-                if (f_scroll_DOWN == 1)
-                {
-                    for (int i = 0; i < block_le1.Count; i++)
-                    {
-                        block_le1[i].y -= 20;
-                    }
-                    for (int i = 0; i < block_up_of_lava.Count; i++)
-                    {
-                        block_up_of_lava[i].y -= 20;
-                    }
-                    for (int i = 0; i < door_le1.Count; i++)
-                    {
-                        door_le1[i].y -= 20;
-                    }
-                    for (int i = 0; i < linedoor_le1.Count; i++)
-                    {
-                        linedoor_le1[i].y -= 20;
-                    }
-                    for (int i = 0; i < stair_le1.Count; i++)
-                    {
-                        stair_le1[i].y -= 20;
-                    }
-                    for (int i = 0; i < lava_le1.Count; i++)
-                    {
-                        lava_le1[i].y -= 20;
-                    }
-                    for (int i = 0; i < trav_le1.Count; i++)
-                    {
-                        trav_le1[i].y -= 20;
-                    }
-                    // Only move wolf if it's within visible area
-                    if (wolf.x >= -100 && wolf.x <= this.ClientSize.Width + 100)
-                    {
-                        wolf.y -= 20;
-                    }
+                    
+                    laser_line.recdst.X -= 20;
                 }
             }
         }
@@ -799,6 +789,18 @@ namespace long_game_project
 
             }
         }
+        void stair()
+        {
+            if (hero.x + hero.W <= stair_le1[0].x+ stair_le1[0].img.Width
+                && hero.x + hero.W >= stair_le1[0].x )
+            {
+                if (hero.y + hero.H <= stair_le1[10].y+5
+               && hero.y >= stair_le1[0].y)
+                {
+                    hero.y += 5;
+                }
+            }
+        }
         private void Tt_Tick(object sender, EventArgs e)
         {
             // Check for lava collision
@@ -806,7 +808,7 @@ namespace long_game_project
             check_hero_touching_lava();
             // Update game over animation
             game_over_animation();
-
+            stair();
             // Update falling blocks
 
             for (int i = 0; i < lava_le1.Count; i++)
@@ -1436,10 +1438,13 @@ namespace long_game_project
                     if (hero.y + hero.walk_r_imges[hero.walk_frame_index].Height > wolf.y &&
                    hero.y + hero.walk_r_imges[hero.walk_frame_index].Height <= wolf.y + wolf.run_right[wolf.wf].Height)
                     {
-
                         wolf.is_attacking = true;
                         hero.hero_health--;
                         wolf.attack_frame_index = 0;
+                        //hero.x = chick_point[0].x - 50;
+                        //hero.y = chick_point[0].y-150;
+                        //f_scroll_L = 1;
+                        //leftflag = 1;
                     }
                 }
             }
@@ -1652,7 +1657,7 @@ namespace long_game_project
             creat_Background_le1();
             creat_lava_le1();
             creat_block_le1();
-            creat_dertion_le1();
+            creat_chick_point_le1();
             creat_door_le1();
             creat_stair_le1();
             creat_trav_le1();
@@ -1790,9 +1795,9 @@ namespace long_game_project
                 temp = new Bitmap("laser load/load laser" + (i + 1) + ".png");
                 laser_enemy.idle.Add(temp);
             }
-            laser_enemy.x = 100;
+            laser_enemy.x = laser_enemy_block_le1[0].x;
             laser_enemy.health = 10;
-            laser_enemy.y = ClientSize.Height - 70 - laser_enemy.idle[0].Height - 50;  // Position above first block with 50px gap
+            laser_enemy.y = laser_enemy_block_le1[0].y -170;  // Position above first block with 50px gap
             laser_enemy.wf = 0;  // Initialize animation frame
             laser_enemy.fly_count = 0;  // Use fly_count as delay counter
 
@@ -1809,6 +1814,15 @@ namespace long_game_project
                 temp = new Bitmap("game over frames/game-over-game-" + i + ".png");
                 hero.game_over_frames.Add(temp);
             }
+            //laser line
+            
+            laser_line = new cadvancedimgactor();
+            laser_line.img = new Bitmap("laser load/laser line.png");
+            laser_line.recsrc = new Rectangle(0, 0, laser_line.img.Width, laser_line.img.Height);
+            laser_line.recdst = new Rectangle(laser_enemy.x + laser_enemy.idle[0].Width,
+                                         laser_enemy.y + laser_enemy.idle[0].Height / 2 - 35,
+                                         0, // Start with 0 width
+                                         laser_line.img.Height);
         }
         void drawscene(Graphics g2)
         {
@@ -1866,6 +1880,11 @@ namespace long_game_project
             {
                 g2.DrawImage(python_block_le1[i].img, python_block_le1[i].x, python_block_le1[i].y);
             }
+            for (int i = 0; i < laser_enemy_block_le1.Count; i++)
+            {
+                g2.DrawImage(laser_enemy_block_le1[i].img, laser_enemy_block_le1[i].x, laser_enemy_block_le1[i].y);
+            }
+            
             hero_display(g2);
             wolf_display(g2);
             dragon_display(g2);
@@ -1884,6 +1903,10 @@ namespace long_game_project
                 int x = (ClientSize.Width - hero.game_over_frames[0].Width) / 2;
                 int y = (ClientSize.Height - hero.game_over_frames[0].Height) / 2;
                 g2.DrawImage(hero.game_over_frames[hero.game_over_frame_index], x, y);
+            }
+            for (int i = 0; i < chick_point.Count; i++)
+            {
+                g2.DrawImage(chick_point[i].img, chick_point[i].x, chick_point[i].y);
             }
         }
 
@@ -1907,6 +1930,8 @@ namespace long_game_project
                     {
                         laser_enemy.wf = 0;
                         laser_enemy.freez = 0;
+                        // Reset laser line when animation resets
+                        laser_line.recdst.Width = 0;
                     }
                 }
                 else
@@ -1919,9 +1944,26 @@ namespace long_game_project
                     else
                     {
                         // When reaching last frame, start delay and freeze
-                        laser_enemy.fly_count = 10;
+                        laser_enemy.fly_count = 30;  
                         laser_enemy.freez = 1;
+                        // Start laser line animation
+                        laser_line.recdst.Width = 0;
+                        laser_line.recdst.Height = laser_line.recsrc.Height;
+                        laser_line.recdst.Y = laser_enemy.y + laser_enemy.idle[0].Height / 2 - 35;
                     }
+                }
+            }
+
+            // Update laser line width when enemy is frozen
+            if (laser_enemy.freez == 1)
+            {
+                laser_line.recdst.Width += 20; // Increase width over time
+                laser_line.recdst.Height -= 2;
+                laser_line.recdst.Y += 1;
+
+                if (laser_line.recdst.Width > 1000) // Maximum width
+                {
+                    laser_line.recdst.Width = 1000;
                 }
             }
         }
@@ -1931,8 +1973,15 @@ namespace long_game_project
             if (!laser_enemy.is_dead)
             {
                 g2.DrawImage(laser_enemy.idle[laser_enemy.wf], laser_enemy.x, laser_enemy.y);
+
+                // Draw laser line when enemy is frozen
+                if (laser_enemy.freez == 1)
+                {
+                    g2.DrawImage(laser_line.img, laser_line.recdst, laser_line.recsrc, GraphicsUnit.Pixel);
+                }
             }
         }
+
 
 
 
