@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\O.R.G\\Downloads\\temp\\long_game_project\\",
+  "WorkspaceRootPath": "D:\\my problems\\multi media\\long_game_project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|c:\\users\\o.r.g\\downloads\\temp\\long_game_project\\long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|d:\\my problems\\multi media\\long_game_project\\long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|solutionrelative:long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|C:\\Users\\O.R.G\\Downloads\\temp\\long_game_project\\long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|D:\\my problems\\multi media\\long_game_project\\long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{9AC5B82C-8FC4-4EBF-A3C9-8872C0C23308}|long_game_project\\long_game_project.csproj|solutionrelative:long_game_project\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -32,11 +32,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\O.R.G\\Downloads\\temp\\long_game_project\\long_game_project\\Form1.cs",
+              "DocumentMoniker": "D:\\my problems\\multi media\\long_game_project\\long_game_project\\Form1.cs",
               "RelativeDocumentMoniker": "long_game_project\\Form1.cs",
-              "ToolTip": "C:\\Users\\O.R.G\\Downloads\\temp\\long_game_project\\long_game_project\\Form1.cs",
-              "RelativeToolTip": "long_game_project\\Form1.cs",
-              "ViewState": "AgIAAOgGAABAZmZmZmYwwPQGAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\my problems\\multi media\\long_game_project\\long_game_project\\Form1.cs*",
+              "RelativeToolTip": "long_game_project\\Form1.cs*",
+              "ViewState": "AgIAAAwDAAAAyMzMzMwUwBYDAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-04T12:57:48.616Z",
               "EditorCaption": ""
@@ -45,9 +45,10 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\O.R.G\\Downloads\\temp\\long_game_project\\long_game_project\\Form1.cs",
+              "DocumentMoniker": "D:\\my problems\\multi media\\long_game_project\\long_game_project\\Form1.cs",
               "RelativeDocumentMoniker": "long_game_project\\Form1.cs",
               "ToolTip": "D:\\my problems\\multi media\\long_game_project\\long_game_project\\Form1.cs [Design]",
+              "RelativeToolTip": "long_game_project\\Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-04T12:56:45.495Z"
             }
