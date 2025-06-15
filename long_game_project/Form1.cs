@@ -140,8 +140,11 @@ namespace long_game_project
 
        
         List<cadvancedimgactor> intro_frames = new List<cadvancedimgactor>();
+        List<cadvancedimgactor> you_win_frames = new List<cadvancedimgactor>();
         int current_intro_frame = 0;
+        int current_win_frame = 0;
         bool is_intro_active = true;
+        bool is_win_active = false;
         
         public Form1()
         {
@@ -940,10 +943,24 @@ namespace long_game_project
         }
         private void Tt_Tick(object sender, EventArgs e)
         {
-            if (is_intro_active)
+            if (is_intro_active || is_win_active)
             {
                 drawdb();
                 return;
+            }
+
+            // Check if hero reached the door
+            if (!is_win_active && door_le1.Count > 0)
+            {
+                if (hero.x + hero.W > door_le1[0].x && 
+                    hero.x < door_le1[0].x + door_le1[0].img.Width &&
+                    hero.y + hero.H > door_le1[0].y && 
+                    hero.y < door_le1[0].y + door_le1[0].img.Height)
+                {
+                    is_win_active = true;
+                    current_win_frame = 0;
+                    return;
+                }
             }
 
             if (python_block_le1[0].x >= 700 && python_block_le1[0].x <= 720)
@@ -982,7 +999,7 @@ namespace long_game_project
             }
 
 
-            check_hero_touching_lava();
+            //check_hero_touching_lava();
             // Update game over animation
             game_over_animation();
             stair();
@@ -1009,6 +1026,7 @@ namespace long_game_project
             check_hero_health_if_touch(python);
             check_hero_health_if_touch(dragon);
             //this.Text = hero.hero_health.ToString();
+            Text = "HELL GAME";
             this.Text = hero.x.ToString();
             scllor();
             drawdb();
@@ -1427,7 +1445,7 @@ namespace long_game_project
                 {
                     hero.y += 20;
                     jump_count--;
-                    if (hero.y > groundY) hero.y = groundY; // للتأكد إنه يقف عليه تمامًا
+                    if (hero.y > groundY) hero.y = groundY;
                 }
                 else
                 {
@@ -1750,7 +1768,16 @@ namespace long_game_project
         void wolf_display(Graphics g2)
         {
             Bitmap wolf_current_image;
-
+            int abs;
+            if (hero.x - wolf.x > 0)
+            {
+                abs = hero.x - wolf.x;
+            }
+            else
+            {
+                abs = hero.x - wolf.x;
+                abs *= -1;
+            }
             if (wolf.is_dead)
             {
                 if (wolf.dead_frame_index >= wolf.dead.Count)
@@ -1774,7 +1801,8 @@ namespace long_game_project
                     wolf_current_image = wolf.attack_left[wolf.attack_frame_index];
                 }
             }
-            else if (wolf.is_in_cooldown || Math.Abs(hero.x - wolf.x) > wolf.DETECTION_RANGE)
+            
+            else if (wolf.is_in_cooldown || abs > wolf.DETECTION_RANGE)
             {
                 // Show idle animation when in cooldown or out of detection range
                 wolf_current_image = wolf.idle[wolf.wf];
@@ -1901,7 +1929,25 @@ namespace long_game_project
             // Load intro frames
             Bitmap temp;
            
+            // Load you win frames
+            for (int i = 1; i <= 100; i++)
+            {
+                cadvancedimgactor pnn = new cadvancedimgactor();
+                string number = i.ToString();
+                if (i < 10)
+                    number = "00" + number;
+                else if (i < 100)
+                    number = "0" + number;
+               
+                string filename = "you win/ezgif-frame-" + number + ".png";
+                Bitmap frame = new Bitmap(filename);
+                pnn.img = frame;
+                pnn.recdst = new Rectangle(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+                pnn.recsrc = new Rectangle(0, 0, frame.Width, frame.Height);
+                you_win_frames.Add(pnn);
+            }
 
+            // Load intro frames
             for (int i = 1; i <= 188; i++)
             {
                 cadvancedimgactor pnn = new cadvancedimgactor();
@@ -1955,7 +2001,7 @@ namespace long_game_project
 
             }
             hero.x = 0; //this.ClientSize.Width - hero.walk_r_imges[0].Width;
-            hero.y = 0;//this.ClientSize.Height - 70 - hero.H;
+            hero.y = this.ClientSize.Height - 70 - hero.H;
 
             // shot
             for (int i = 0; i < 11; i++)
@@ -2117,6 +2163,21 @@ namespace long_game_project
                     if (current_intro_frame >= intro_frames.Count)
                     {
                         current_intro_frame = intro_frames.Count - 1;
+                    }
+                }
+                return;
+            }
+
+            if (is_win_active)
+            {
+                // Draw win frame
+                if (current_win_frame < you_win_frames.Count)
+                {
+                    g2.DrawImage(you_win_frames[current_win_frame].img, you_win_frames[current_win_frame].recdst, you_win_frames[current_win_frame].recsrc, GraphicsUnit.Pixel);
+                    current_win_frame++;
+                    if (current_win_frame >= you_win_frames.Count)
+                    {
+                        current_win_frame = you_win_frames.Count - 1;
                     }
                 }
                 return;
