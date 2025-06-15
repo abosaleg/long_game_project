@@ -1025,8 +1025,6 @@ namespace long_game_project
             if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > enemy.x &&
                 hero.x < enemy.x + enemy.run_right[enemy.wf].Width && enemy.is_dead == false)
             {
-
-
                 if (hero.y + hero.walk_r_imges[hero.walk_frame_index].Height > enemy.y &&
                     hero.y + hero.walk_r_imges[hero.walk_frame_index].Height <= enemy.y + enemy.run_right[enemy.wf].Height/2)
                 {
@@ -1064,25 +1062,22 @@ namespace long_game_project
         }
         void hit_leser()
         {
-            int laser_x = laser_block_le1[0].x;
-            int laser_y = laser_block_le1[0].y;
-            int laser_w = laser_block_le1[0].img.Width;
-            int laser_h = laser_block_le1[0].img.Height;
-
-            bool x_overlap = (hero.x + hero.W > laser_x) && (hero.x < laser_x + laser_w);
-            bool y_overlap = (hero.y + hero.H > laser_y) && (hero.y < laser_y + laser_h);
-
-            if (x_overlap && y_overlap)
+            foreach (var item in laser_block_le1)
             {
-                if (!hero.is_touched_laser)
+                int x = item.x;
+                int w = item.x + item.img.Width;
+                if (f_laser_yz == 1)
                 {
-                    hero.hero_health--;
-                    hero.is_touched_laser = true;
+                    if (hero.x >= x - 50 && hero.x <= w-50 && hero.y <= py_laser2)
+                    {
+                        hero.hero_health--;
+                        hero.is_touched_laser = true;
+                    }
+                    else
+                    {
+                        hero.is_touched_laser = false;  
+                    }
                 }
-            }
-            else
-            {
-                hero.is_touched_laser = false;
             }
         }
 
