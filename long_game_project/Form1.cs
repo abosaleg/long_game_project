@@ -88,6 +88,7 @@ namespace long_game_project
         public Bitmap img;
         public Rectangle recdst;
         public Rectangle recsrc;
+        public bool is_touched_hero = false;
     }
 
     public class MUCImgActor
@@ -934,18 +935,6 @@ namespace long_game_project
         }
         private void Tt_Tick(object sender, EventArgs e)
         {
-            // Check for lava collision
-
-            check_hero_touching_lava();
-            // Update game over animation
-            game_over_animation();
-            stair();
-            // Update falling blocks
-
-           
-
-          
-
             if (python_block_le1[0].x >= 700 && python_block_le1[0].x <= 720)
             {
                 F_lo = 1;
@@ -982,7 +971,12 @@ namespace long_game_project
             }
 
 
-
+            check_hero_touching_lava();
+            // Update game over animation
+            game_over_animation();
+            stair();
+            hit_pyhon();
+            check_laser_enemey();
             hit_leser();
             laser();
             trav();
@@ -1163,6 +1157,44 @@ namespace long_game_project
 
 
 
+        }
+        void hit_pyhon()
+        {
+            int Y = python.y;
+            int H = python.y + python.run_right[0].Height;
+
+            if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > python.x &&
+               hero.x < python.x + python.run_right[python.wf].Width && python.is_dead == false
+               && hero.y <= Y &&
+                    hero.y + hero.walk_r_imges[hero.walk_frame_index].Height >= H - 17)
+            {
+                hero.hero_health--;
+                hero.is_touched_laser = true;
+            }
+            else
+            {
+                hero.is_touched_laser = false;
+            }
+
+        }
+        void check_laser_enemey()
+        {
+            bool is_touching = false;
+            if (laser_line.recdst.X + laser_line.recdst.Width > hero.x && laser_line.recdst.X + laser_line.recdst.Width < hero.x + hero.H && hero.y < laser_block_le1[0].y - hero.H)
+            {
+                is_touching = true;
+
+            }
+
+            if (is_touching && !laser_line.is_touched_hero)
+            {
+                hero.hero_health--;
+                laser_line.is_touched_hero = true;
+            }
+            else if (!is_touching)
+            {
+                laser_line.is_touched_hero = false;
+            }
         }
         void arrow_display(Graphics g2)
         {
