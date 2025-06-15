@@ -542,19 +542,19 @@ namespace long_game_project
         {
             cimgactor pnnr1 = new cimgactor();
             pnnr1.img = new Bitmap("lasir/00_lasir.png");
-            pnnr1.x = 500 ;
+            pnnr1.x = 450 ;
             pnnr1.y = ClientSize.Height  - 70 - 280;
             laser_block_le1.Add(pnnr1);
 
             pnnr1 = new cimgactor();
             pnnr1.img = new Bitmap("lasir/00_lasir.png");
-            pnnr1.x = 700;
+            pnnr1.x = 750;
             pnnr1.y = ClientSize.Height - 70 - 280;
             laser_block_le1.Add(pnnr1);
 
             pnnr1 = new cimgactor();
             pnnr1.img = new Bitmap("lasir/00_lasir.png");
-            pnnr1.x = 900;
+            pnnr1.x = 1050;
             pnnr1.y = ClientSize.Height - 70 - 280;
             laser_block_le1.Add(pnnr1);
 
@@ -988,7 +988,7 @@ namespace long_game_project
             movearrow();
             move_python();
             move_dragon();
-           // make_block_fall();
+            make_block_fall();
             move_laser_enemies();
             enemy_hit_from_arrow(wolf);
             enemy_hit_from_arrow(python);
@@ -1060,9 +1060,10 @@ namespace long_game_project
             {
                 int x = item.x;
                 int w = item.x + item.img.Width;
+                int y = item.y;
                 if (f_laser_yz == 1)
                 {
-                    if (hero.x >= x - 50 && hero.x <= w-50 && hero.y <= py_laser2)
+                    if (hero.x >= x - 50 && hero.x <= w-50 && hero.y <= py_laser2&& hero.y>y)
                     {
                         hero.hero_health--;
                         hero.is_touched_laser = true;
@@ -1847,17 +1848,17 @@ namespace long_game_project
                     // Handle death animation if you have one
                     return;
                 }
-                else if (dragon.is_attacking)
-                {
-                    if (dragon.is_move_right)
-                    {
-                        dragon_current_image = dragon.attack_right[dragon.attack_frame_index];
-                    }
-                    else
-                    {
-                        dragon_current_image = dragon.attack_left[dragon.attack_frame_index];
-                    }
-                }
+                //else if (dragon.is_attacking)
+                //{
+                //    if (dragon.is_move_right)
+                //    {
+                //        dragon_current_image = dragon.attack_right[dragon.attack_frame_index];
+                //    }
+                //    else
+                //    {
+                //        dragon_current_image = dragon.attack_left[dragon.attack_frame_index];
+                //    }
+                //}
                 else
                 {
                     if (dragon.is_move_right)
@@ -1884,6 +1885,14 @@ namespace long_game_project
             creat_stair_le1();
             creat_trav_le1();
             laser_blo_le1();
+            dragon_block_le1.RemoveAt(2);
+            dragon_block_le1.RemoveAt(2);
+            dragon_block_le1.RemoveAt(2);
+
+
+            dragon_block_le1.RemoveAt(4);
+            dragon_block_le1.RemoveAt(4);
+            dragon_block_le1.RemoveAt(4);
             // walk 
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 
@@ -1902,7 +1911,7 @@ namespace long_game_project
 
             }
             hero.x = 0; //this.ClientSize.Width - hero.walk_r_imges[0].Width;
-            hero.y = this.ClientSize.Height - 70 - hero.H;
+            hero.y = 0;//this.ClientSize.Height - 70 - hero.H;
 
             // shot
             for (int i = 0; i < 11; i++)
@@ -2009,7 +2018,7 @@ namespace long_game_project
 
             // Set dragon initial position
             dragon.x = dragon_block_le1[0].x;  // Start at the left boundary
-            dragon.y = dragon_block_le1[0].img.Height + 100;
+            dragon.y = dragon_block_le1[0].img.Height -100;
             dragon.is_move_right = true;
             dragon.dir = 10;
             // creat laser character
