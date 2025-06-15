@@ -850,7 +850,7 @@ namespace long_game_project
             {
                 if (block_up_of_lava[i].is_falling)
                 {
-                    block_up_of_lava[i].fall_speed += 1; // Increase fall speed (gravity)
+                    block_up_of_lava[i].fall_speed += 1; 
                     block_up_of_lava[i].y += block_up_of_lava[i].fall_speed;
 
 
@@ -862,7 +862,7 @@ namespace long_game_project
             {
                 if (!block.is_falling &&
                     hero.y + hero.H >= block.y &&
-                    hero.y + hero.H <= block.y + 5 && // Small threshold to detect standing
+                    hero.y + hero.H <= block.y + 5 && 
                     hero.x + hero.W > block.x &&
                     hero.x < block.x + block.img.Width)
                 {
@@ -1000,14 +1000,13 @@ namespace long_game_project
 
 
             //check_hero_touching_lava();
-            // Update game over animation
             game_over_animation();
             stair();
             check_laser_enemey();
             hit_leser();
-            laser();
-            trav();
-            frem_lava();
+            Move_laser();
+            Move_elevator();
+            frame_lava();
             shot();
             jump();
             if_idle();
@@ -1066,7 +1065,7 @@ namespace long_game_project
                 enemy.is_touched_hero = false;
             }
         }
-        void laser()
+        void Move_laser()
         {
             if (f_laser_yz == 1 && py_laser2 <= ClientSize.Height - 70)
             {
@@ -1106,7 +1105,7 @@ namespace long_game_project
             }
         }
 
-        void trav()
+        void Move_elevator()
         {
             int trav_speed = 5;
 
@@ -1151,7 +1150,7 @@ namespace long_game_project
                 }
             }
         }
-        void frem_lava()
+        void frame_lava()
         {
             for (int i = 0; i < lava_le1.Count; i++)
             {
@@ -1617,7 +1616,7 @@ namespace long_game_project
 
                             // Put enemy in cooldown when hit
                             enemy.is_in_cooldown = true;
-                            enemy.attack_cooldown = 15; // Adjust this value to change cooldown duration
+                            enemy.attack_cooldown = 15; // 
 
                             if (enemy.health <= 0)
                             {
@@ -1691,7 +1690,7 @@ namespace long_game_project
                 return;
             }
 
-            // Attack range check (100 units)
+            // Attack range check 100
             if (distance_to_hero <= wolf.ATTACK_RANGE && !wolf.is_attacking && !wolf.is_in_cooldown)
             {
 
@@ -2289,9 +2288,9 @@ namespace long_game_project
             {
                 if (laser_enemy.freez == 1)
                 {
-                    // If frozen, stay on last frame
+                    // If frozen stay on last frame
                     laser_enemy.wf = 5;
-                    // When delay is complete, reset to frame 0 and unfreeze
+                    // When delay is complete reset to frame 0 and unfreeze
                     if (laser_enemy.fly_count == 0)
                     {
                         laser_enemy.wf = 0;
@@ -2309,7 +2308,7 @@ namespace long_game_project
                     }
                     else
                     {
-                        // When reaching last frame, start delay and freeze
+                        // When reach last frame start delay and freeze
                         laser_enemy.fly_count = 30;  
                         laser_enemy.freez = 1;
                         // Start laser line animation
