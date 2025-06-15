@@ -975,7 +975,6 @@ namespace long_game_project
             // Update game over animation
             game_over_animation();
             stair();
-            hit_pyhon();
             check_laser_enemey();
             hit_leser();
             laser();
@@ -1014,16 +1013,17 @@ namespace long_game_project
                     hero.dead_frame_index = 0;
                 }
             }
+            int Y = python.y;
+            int H = python.y + python.run_right[python.wf].Height;
             bool is_touching = false;
 
-            if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > enemy.x &&
-                hero.x < enemy.x + enemy.run_right[enemy.wf].Width && enemy.is_dead == false)
+            if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > python.x &&
+                hero.x < python.x + python.run_right[python.wf].Width &&
+                !python.is_dead &&
+                hero.y <= Y &&
+                hero.y + hero.walk_r_imges[hero.walk_frame_index].Height >= H - 17)
             {
-                if (hero.y + hero.walk_r_imges[hero.walk_frame_index].Height > enemy.y &&
-                    hero.y + hero.walk_r_imges[hero.walk_frame_index].Height <= enemy.y + enemy.run_right[enemy.wf].Height/2)
-                {
-                    is_touching = true;
-                }
+                is_touching = true;
             }
 
             if (is_touching && !enemy.is_touched_hero && !hero.is_dead)
@@ -1156,25 +1156,6 @@ namespace long_game_project
             }
 
 
-
-        }
-        void hit_pyhon()
-        {
-            int Y = python.y;
-            int H = python.y + python.run_right[0].Height;
-
-            if (hero.x + hero.walk_r_imges[hero.walk_frame_index].Width > python.x &&
-               hero.x < python.x + python.run_right[python.wf].Width && python.is_dead == false
-               && hero.y <= Y &&
-                    hero.y + hero.walk_r_imges[hero.walk_frame_index].Height >= H - 17)
-            {
-                hero.hero_health--;
-                hero.is_touched_laser = true;
-            }
-            else
-            {
-                hero.is_touched_laser = false;
-            }
 
         }
         void check_laser_enemey()
