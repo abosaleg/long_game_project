@@ -138,6 +138,11 @@ namespace long_game_project
         cenemyactor laser_enemy = new cenemyactor();
         cadvancedimgactor laser_line;
 
+       
+        List<cadvancedimgactor> intro_frames = new List<cadvancedimgactor>();
+        int current_intro_frame = 0;
+        bool is_intro_active = true;
+        
         public Form1()
         {
             Load += Form1_Load;
@@ -935,6 +940,12 @@ namespace long_game_project
         }
         private void Tt_Tick(object sender, EventArgs e)
         {
+            if (is_intro_active)
+            {
+                drawdb();
+                return;
+            }
+
             if (python_block_le1[0].x >= 700 && python_block_le1[0].x <= 720)
             {
                 F_lo = 1;
@@ -991,6 +1002,7 @@ namespace long_game_project
             make_block_fall();
             move_laser_enemies();
             enemy_hit_from_arrow(wolf);
+            //enemy_hit_from_arrow(laser_enemy
             enemy_hit_from_arrow(python);
             enemy_hit_from_arrow(dragon);
             //check_hero_health_if_touch(wolf);
@@ -1513,6 +1525,16 @@ namespace long_game_project
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (is_intro_active)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    is_intro_active = false;
+                    intro_frames.Clear();
+                    return;
+                }
+            }
+
             switch (e.KeyCode)
             {
                 case Keys.W:
@@ -1876,6 +1898,29 @@ namespace long_game_project
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            // Load intro frames
+            Bitmap temp;
+           
+
+            for (int i = 1; i <= 188; i++)
+            {
+                cadvancedimgactor pnn = new cadvancedimgactor();
+                string number = i.ToString();
+                if (i < 10)
+                    number = "00" + number;
+                else if (i < 100)
+                    number = "0" + number;
+               
+
+                string filename = "intro/ezgif-frame-" + number + ".png";
+
+                Bitmap frame = new Bitmap(filename);
+                pnn.img = frame;
+                pnn.recdst = new Rectangle(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+                pnn.recsrc = new Rectangle(0, 0, frame.Width, frame.Height);
+                intro_frames.Add(pnn);
+            }
+
 
             creat_Background_le1();
             creat_lava_le1();
@@ -1896,7 +1941,6 @@ namespace long_game_project
             // walk 
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 
-            Bitmap temp;
             for (int i = 0; i < 8; i++)
             {
                 temp = new Bitmap("walk/" + i + ".png");
@@ -2058,6 +2102,26 @@ namespace long_game_project
         }
         void drawscene(Graphics g2)
         {
+            if (is_intro_active)
+            {
+                // Draw intro frame
+                if (current_intro_frame < intro_frames.Count)
+                {
+                    // Center the intro frame
+                    g2.DrawImage(intro_frames[current_intro_frame].img, intro_frames[current_intro_frame].recdst, intro_frames[current_intro_frame].recsrc,GraphicsUnit.Pixel);
+
+                  
+
+                    // Loop back to last frame
+                    current_intro_frame++;
+                    if (current_intro_frame >= intro_frames.Count)
+                    {
+                        current_intro_frame = intro_frames.Count - 1;
+                    }
+                }
+                return;
+            }
+
             g2.Clear(Color.White);
 
             // Draw health bar in top-left corner
